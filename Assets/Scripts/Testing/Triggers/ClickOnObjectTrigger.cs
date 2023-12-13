@@ -24,8 +24,15 @@ public class ClickOnObjectTrigger : Trigger
     
     private void OnObjectClicked(ClickableObject obj)
     {
-        objectReference.SetValue(obj);
-        Activate();
+        try
+        {
+            objectReference.SetValue(obj);
+            Activate();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to cast {obj.Name}");
+        }
     }
     
     
@@ -35,7 +42,7 @@ public class ClickOnObjectTrigger : Trigger
     }
 
 #if UNITY_EDITOR
-    public override void DrawEditorWindowUI()
+    public override void DrawEditorWindowUI(IBlackboard localBlackboard)
     {
         EventEditorUtils.DrawLinkText("Clickable object {0} clicked.", localBlackboard, objectReference);
     }

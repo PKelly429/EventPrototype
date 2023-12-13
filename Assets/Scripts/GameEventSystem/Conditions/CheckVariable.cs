@@ -17,7 +17,7 @@ public class CheckVariable : Condition
     }
     
 #if UNITY_EDITOR
-    public override void DrawEditorWindowUI()
+    public override void DrawEditorWindowUI(IBlackboard localBlackboard)
     {
         value = EditorGUILayout.Toggle("Value", value);
     }

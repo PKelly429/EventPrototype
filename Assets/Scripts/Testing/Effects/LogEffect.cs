@@ -22,7 +22,7 @@ public class LogEffect : Effect
     }
 
 #if UNITY_EDITOR
-    public override void DrawEditorWindowUI()
+    public override void DrawEditorWindowUI(IBlackboard localBlackboard)
     {
         if (logString == null)
         {
@@ -31,7 +31,7 @@ public class LogEffect : Effect
 
         EditorGUILayout.BeginVertical();
         EditorGUILayout.LabelField("Log string to console:");
-        logString.DrawEditorWindowUI();
+        logString.DrawEditorWindowUI(localBlackboard);
         EditorGUILayout.EndVertical();
     }
     #endif

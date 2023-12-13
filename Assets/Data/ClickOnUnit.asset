@@ -14,51 +14,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blackboards: []
   triggers:
-  - rid: 8146218034620268545
+  - rid: 8146218193411112964
   conditions: []
   effects:
-  - rid: 8146218034620268544
+  - rid: 8146218193411112974
   _definedVariables:
-  - rid: 8146217978032553986
-  - rid: 8146217978032553989
-  - rid: 8146217978032553990
+  - rid: 8146218193411112963
   references:
     version: 2
     RefIds:
-    - rid: 8146217978032553986
-      type: {class: ClickableObjectDefinition, ns: , asm: Assembly-CSharp}
+    - rid: 8146218193411112963
+      type: {class: CrewDefinition, ns: , asm: Assembly-CSharp}
       data:
-        uniqueId: b95974d16281f3e4184cdb4280441d9f
-        _name: CrewMember
-    - rid: 8146217978032553989
-      type: {class: EntityDefinition, ns: , asm: Assembly-CSharp}
-      data:
-        uniqueId: e2fe1af2f557b9343bb82535889e2c52
-        _name: SometingElse
-    - rid: 8146217978032553990
-      type: {class: FloatVariable, ns: , asm: Assembly-CSharp}
-      data:
-        uniqueId: 3d5d915a305455c4495558d06c6c6078
-        _name: Value
-    - rid: 8146218034620268544
-      type: {class: LogEffect, ns: , asm: Assembly-CSharp}
-      data:
-        logString:
-          text: Crew member with name {0} has assigned role {1}
-          parameters:
-          - refId: b95974d16281f3e4184cdb4280441d9f
-            blackboardId: 22668
-            name: CrewMember.Name
-            propertyName: Name
-          - refId: b95974d16281f3e4184cdb4280441d9f
-            blackboardId: 22668
-            name: CrewMember.Role
-            propertyName: Role
-    - rid: 8146218034620268545
+        uniqueId: 7dcbc01b788d30c4e983a2b07d107c16
+        _name: ClickedCrew
+    - rid: 8146218193411112964
       type: {class: ClickOnObjectTrigger, ns: , asm: Assembly-CSharp}
       data:
         objectReference:
-          refId: b95974d16281f3e4184cdb4280441d9f
-          blackboardId: 22668
-          name: CrewMember
+          refId: 7dcbc01b788d30c4e983a2b07d107c16
+          blackboardId: 22670
+          name: ClickedCrew
           propertyName: 
+    - rid: 8146218193411112974
+      type: {class: LogEffect, ns: , asm: Assembly-CSharp}
+      data:
+        logString:
+          text: '{0}'
+          parameters:
+          - refId: 7dcbc01b788d30c4e983a2b07d107c16
+            blackboardId: 22670
+            name: ClickedCrew.Name
+            propertyName: Name

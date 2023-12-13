@@ -127,7 +127,7 @@ public class GameEventEditor : Editor
             {
                 EditorGUILayout.BeginHorizontal("box");
                 EditorGUILayout.BeginVertical();
-                trigger.DrawEditorWindowUI();
+                trigger.DrawEditorWindowUI(gameEvent);
                 EditorGUILayout.EndVertical();
                 if (GUILayout.Button(delTexture, EditorStyles.iconButton))
                 {
@@ -174,7 +174,7 @@ public class GameEventEditor : Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.Space(indentSize);
             EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-            DrawComponentList(gameEvent.effects);
+            DrawComponentList(gameEvent, gameEvent.effects);
 
             EditorGUILayout.Space(spaceSize);
             if (GUILayout.Button("Add Effect:", EditorStyles.popup))
@@ -193,13 +193,13 @@ public class GameEventEditor : Editor
         }
     }
 
-    private void DrawComponentList<T>(List<T> components) where T : EventComponent
+    private void DrawComponentList<T>(GameEvent gameEvent, List<T> components) where T : EventComponent
     {
         foreach (var component in components)
         {
             EditorGUILayout.BeginHorizontal("box");
             EditorGUILayout.BeginVertical();
-            component.DrawEditorWindowUI();
+            component.DrawEditorWindowUI(gameEvent);
             EditorGUILayout.EndVertical();
             if (GUILayout.Button(delTexture, EditorStyles.iconButton))
             {

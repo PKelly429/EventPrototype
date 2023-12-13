@@ -28,7 +28,7 @@ public class VariableSearchProvider : ScriptableObject, ISearchWindowProvider
         
         foreach (var variableDefinition in blackboard.definedVariables)
         {
-            if (!variableDefinition.type.IsAssignableFrom(searchType))
+            if (!IsMatchingType(variableDefinition.type))
             {
                 AddExposedFields(searchList, blackboard, variableDefinition, 2);
                 continue;
@@ -80,7 +80,7 @@ public class VariableSearchProvider : ScriptableObject, ISearchWindowProvider
             .Where(prop => prop.IsDefined(typeof(ExposePropertyAttribute), false));
         foreach (var property in matchingProperties)
         {
-            if (!property.PropertyType.IsAssignableFrom(searchType)) continue;
+            if (!IsMatchingType(property.PropertyType)) continue;
             // if (!variableAdded)
             // {
             //     searchList.Add(new SearchTreeGroupEntry(new GUIContent(variableDefinition.name), level));
@@ -96,6 +96,11 @@ public class VariableSearchProvider : ScriptableObject, ISearchWindowProvider
             };
             searchList.Add(entry);
         }
+    }
+
+    private bool IsMatchingType(Type type)
+    {
+        return type.IsAssignableFrom(searchType) || searchType.IsAssignableFrom(type);
     }
 
     public bool OnSelectEntry(SearchTreeEntry SearchTreeEntry, SearchWindowContext context)

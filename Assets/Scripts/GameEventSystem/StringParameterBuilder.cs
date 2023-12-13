@@ -29,7 +29,7 @@ public class StringParameterBuilder : EventComponent
         return string.Format(text, values);
     }
 
-    public void ResolveRef()
+    protected override void SetObjReferences()
     {
         foreach (var parameter in parameters)
         {
@@ -38,7 +38,7 @@ public class StringParameterBuilder : EventComponent
     }
 
     #if UNITY_EDITOR
-    public override void DrawEditorWindowUI()
+    public override void DrawEditorWindowUI(IBlackboard localBlackboard)
     {
         text = EditorGUILayout.TextArea(text, new GUIStyle(EditorStyles.textArea){wordWrap =true});
         if (string.IsNullOrEmpty(text))
@@ -52,13 +52,16 @@ public class StringParameterBuilder : EventComponent
             return;
         }
         int variables = words.Length - 1;
-        if (parameters.Length != variables)
+        if (parameters == null || parameters.Length != variables)
         {
-            var old = parameters.ToList();
+            var old = parameters?.ToList();
             parameters = new StringParameter[variables];
-            for (int i = 0; i < Mathf.Min(old.Count, parameters.Length); i++)
+            if (old != null)
             {
-                parameters[i] = old[i];
+                for (int i = 0; i < Mathf.Min(old.Count, parameters.Length); i++)
+                {
+                    parameters[i] = old[i];
+                }
             }
         }
         for(int i=0; i<parameters.Length; i++)

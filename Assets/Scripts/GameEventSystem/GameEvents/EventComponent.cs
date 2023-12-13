@@ -19,6 +19,6 @@ public abstract class EventComponent
         
     }
 #if UNITY_EDITOR
-    public abstract void DrawEditorWindowUI();
+    public abstract void DrawEditorWindowUI(IBlackboard localBlackboard);
 #endif
 }
