@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8bdd22551ed3244a9ca748c31e45137, type: 3}
+  m_Name: ClickOnUnit
+  m_EditorClassIdentifier: 
+  blackboards: []
+  triggers:
+  - rid: 8146218034620268545
+  conditions: []
+  effects:
+  - rid: 8146218034620268544
+  _definedVariables:
+  - rid: 8146217978032553986
+  - rid: 8146217978032553989
+  - rid: 8146217978032553990
+  references:
+    version: 2
+    RefIds:
+    - rid: 8146217978032553986
+      type: {class: ClickableObjectDefinition, ns: , asm: Assembly-CSharp}
+      data:
+        uniqueId: b95974d16281f3e4184cdb4280441d9f
+        _name: CrewMember
+    - rid: 8146217978032553989
+      type: {class: EntityDefinition, ns: , asm: Assembly-CSharp}
+      data:
+        uniqueId: e2fe1af2f557b9343bb82535889e2c52
+        _name: SometingElse
+    - rid: 8146217978032553990
+      type: {class: FloatVariable, ns: , asm: Assembly-CSharp}
+      data:
+        uniqueId: 3d5d915a305455c4495558d06c6c6078
+        _name: Value
+    - rid: 8146218034620268544
+      type: {class: LogEffect, ns: , asm: Assembly-CSharp}
+      data:
+        logString:
+          text: Crew member with name {0} has assigned role {1}
+          parameters:
+          - refId: b95974d16281f3e4184cdb4280441d9f
+            blackboardId: 22668
+            name: CrewMember.Name
+            propertyName: Name
+          - refId: b95974d16281f3e4184cdb4280441d9f
+            blackboardId: 22668
+            name: CrewMember.Role
+            propertyName: Role
+    - rid: 8146218034620268545
+      type: {class: ClickOnObjectTrigger, ns: , asm: Assembly-CSharp}
+      data:
+        objectReference:
+          refId: b95974d16281f3e4184cdb4280441d9f
+          blackboardId: 22668
+          name: CrewMember
+          propertyName: 
