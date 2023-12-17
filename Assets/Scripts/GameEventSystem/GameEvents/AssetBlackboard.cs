@@ -13,8 +13,9 @@ using UnityEditor;
 public class AssetBlackboard : ScriptableObject, IBlackboard
 {
     [SerializeReference] private List<VariableDefinition> _definedVariables = new List<VariableDefinition>();
+    [ScriptableObjectIdAttribute] [SerializeField] private string _uniqueID;
     public List<VariableDefinition> definedVariables => _definedVariables;
-    public int uniqueID => GetInstanceID();
+    public string uniqueID => _uniqueID;
     
     public void AddVariable(VariableDefinition variable)
     {
@@ -46,8 +47,8 @@ public class AssetBlackboard : ScriptableObject, IBlackboard
     }
 
     #region Lookup
-    private static Dictionary<int, AssetBlackboard> blackboardLookup = new Dictionary<int, AssetBlackboard>();
-    public static IBlackboard GetBlackboard(int uid)
+    private static Dictionary<string, AssetBlackboard> blackboardLookup = new Dictionary<string, AssetBlackboard>();
+    public static IBlackboard GetBlackboard(string uid)
     {
         #if UNITY_EDITOR
         if (!blackboardLookup.ContainsKey(uid))

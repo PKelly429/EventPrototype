@@ -6,7 +6,7 @@ using UnityEngine;
 public interface IBlackboard
 {
     public List<VariableDefinition> definedVariables { get; }
-    public int uniqueID { get; }
+    public string uniqueID { get; }
     
     public string name { get; }
 

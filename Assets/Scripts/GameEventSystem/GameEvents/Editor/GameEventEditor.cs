@@ -64,6 +64,7 @@ public class GameEventEditor : Editor
 
     private void DrawVariables(GameEvent gameEvent)
     {
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_uniqueID"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("blackboards"));
         string prefix = showVariables ? "[-]" : "[+]";
         if (GUILayout.Button($"{prefix} Variables", SubHeadingStyle))
@@ -216,15 +217,4 @@ public class GameEventEditor : Editor
 
         removedComponents.Clear();
     }
-
-    private static void DrawUILine()
-    {
-        Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(10 + 2));
-        r.height = 2;
-        r.y += 10 / 2;
-        r.x -= 2;
-        r.width += 6;
-        EditorGUI.DrawRect(r, Color.black);
-    }
-    
 }

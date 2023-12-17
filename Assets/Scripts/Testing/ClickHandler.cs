@@ -10,6 +10,11 @@ public class ClickHandler : MonoBehaviour
     
     void Update()
     {
+        if (ModalWindowController.modalWindowEnabled)
+        {
+            return;
+        }
+        
         Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
         bool mouseDown = Input.GetMouseButtonDown(0);
 

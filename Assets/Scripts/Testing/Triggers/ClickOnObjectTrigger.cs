@@ -29,9 +29,13 @@ public class ClickOnObjectTrigger : Trigger
             objectReference.SetValue(obj);
             Activate();
         }
-        catch (Exception e)
+        catch (InvalidCastException e)
         {
             Debug.LogError($"Failed to cast {obj.Name}");
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
         }
     }
     

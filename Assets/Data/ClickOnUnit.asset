@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: ClickOnUnit
   m_EditorClassIdentifier: 
   blackboards: []
-  triggers:
-  - rid: 8146218193411112964
+  triggers: []
   conditions: []
   effects:
   - rid: 8146218193411112974
+  _uniqueID: b5e02f9bbff122a4ea3e5a63c4c854e8
   _definedVariables:
   - rid: 8146218193411112963
   references:
@@ -28,14 +28,6 @@ MonoBehaviour:
       data:
         uniqueId: 7dcbc01b788d30c4e983a2b07d107c16
         _name: ClickedCrew
-    - rid: 8146218193411112964
-      type: {class: ClickOnObjectTrigger, ns: , asm: Assembly-CSharp}
-      data:
-        objectReference:
-          refId: 7dcbc01b788d30c4e983a2b07d107c16
-          blackboardId: 22670
-          name: ClickedCrew
-          propertyName: 
     - rid: 8146218193411112974
       type: {class: LogEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -43,6 +35,6 @@ MonoBehaviour:
           text: '{0}'
           parameters:
           - refId: 7dcbc01b788d30c4e983a2b07d107c16
-            blackboardId: 22670
+            blackboardId: b5e02f9bbff122a4ea3e5a63c4c854e8
             name: ClickedCrew.Name
             propertyName: Name

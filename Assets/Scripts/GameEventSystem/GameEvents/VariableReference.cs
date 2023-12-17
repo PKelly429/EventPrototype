@@ -8,7 +8,7 @@ using UnityEngine;
 public abstract class VariableReference
 {
     public string refId;
-    public int blackboardId;
+    public string blackboardId;
     public string name;
     public string propertyName;
 

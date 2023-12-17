@@ -11,11 +11,13 @@ public class GameEvent : ScriptableObject, IBlackboard
     [SerializeReference] public List<Trigger> triggers;
     [SerializeReference] public List<Condition> conditions;
     [SerializeReference] public List<Effect> effects;
+
+    [ScriptableObjectIdAttribute] [SerializeField] private string _uniqueID;
     
     #region IBlackboard
     [SerializeReference] private List<VariableDefinition> _definedVariables = new List<VariableDefinition>();
     public List<VariableDefinition> definedVariables => _definedVariables;
-    public int uniqueID => GetInstanceID();
+    public string uniqueID => _uniqueID;
     
     public void AddVariable(VariableDefinition variable)
     {
