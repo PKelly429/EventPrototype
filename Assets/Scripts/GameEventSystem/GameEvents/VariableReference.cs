@@ -25,11 +25,13 @@ public abstract class VariableReference
                 if (_variableDefinition != null)
                 {
                     _variableDefinition.onNameChanged -= OnDefinitionNameChanged;
+                    value.onRemoved -= OnDefinitionRemoved;
                 }
 
                 if (value != null)
                 {
                     value.onNameChanged += OnDefinitionNameChanged;
+                    value.onRemoved += OnDefinitionRemoved;
                 }
 
                 UpdateName();
@@ -91,6 +93,12 @@ public abstract class VariableReference
     private void OnDefinitionNameChanged(string obj)
     {
         UpdateName();
+    }
+    private void OnDefinitionRemoved()
+    {
+        refId = string.Empty;
+        name = string.Empty;
+        propertyName = string.Empty;
     }
 #endif
     

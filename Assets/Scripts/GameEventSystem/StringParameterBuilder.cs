@@ -70,22 +70,31 @@ public class StringParameterBuilder : EventComponent
             {
                 parameters[i] = new StringParameter();
             }
+
+            EditorGUILayout.Space(5);
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField($"{i}:", GUILayout.Width(20));
             if (GUILayout.Button(parameters[i].GetName(), EditorStyles.linkLabel, GUILayout.ExpandWidth(false)))
             {
                 ShowEntitySearchWindow.Open(localBlackboard, new List<IBlackboard>(), parameters[i]);
             }
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
         }
 
         try
         {
-            GUI.enabled = false;
-            EditorGUILayout.TextArea(ValidateValue(), new GUIStyle(EditorStyles.textArea){wordWrap =true});
-            GUI.enabled = true;
+            // GUI.enabled = false;
+            // EditorGUILayout.TextArea(ValidateValue(), new GUIStyle(EditorStyles.textArea){wordWrap =true});
+            // GUI.enabled = true;
+            string s = ValidateValue();
         }
         catch (Exception e)
         {
             EditorGUILayout.HelpBox("String cannot be formatted.", MessageType.Error);
         }
+        
+        EditorGUILayout.Space(5);
     }
     
     public string ValidateValue()

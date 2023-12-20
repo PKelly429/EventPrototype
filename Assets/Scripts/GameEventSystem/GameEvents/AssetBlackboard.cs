@@ -22,6 +22,12 @@ public class AssetBlackboard : ScriptableObject, IBlackboard
         variable.GenerateId();
         definedVariables.Add(variable);
     }
+    
+    public void RemoveVariable(VariableDefinition variable)
+    {
+        variable.Delete();
+        definedVariables.Remove(variable);
+    }
 
     public VariableDefinition GetVariableByID(string id)
     {
@@ -67,6 +73,11 @@ public class AssetBlackboard : ScriptableObject, IBlackboard
 
     private static void RegisterBlackboard(AssetBlackboard blackboard)
     {
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+        
         if (blackboardLookup.ContainsKey(blackboard.uniqueID))
         {
             return;
@@ -76,6 +87,11 @@ public class AssetBlackboard : ScriptableObject, IBlackboard
     
     private static void DeregisterBlackboard(AssetBlackboard blackboard)
     {
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+        
         if (!blackboardLookup.ContainsKey(blackboard.uniqueID))
         {
             return;

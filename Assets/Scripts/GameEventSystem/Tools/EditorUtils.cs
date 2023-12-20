@@ -4,6 +4,8 @@ using UnityEngine;
 
 public static class EditorUtils
 {
+    public static int IndentSize = 5;
+    
     public static void DrawUILine()
     {
         Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(10 + 2));
@@ -14,13 +16,13 @@ public static class EditorUtils
         EditorGUI.DrawRect(r, Color.black);
     }
     
-    public static GUIStyle UIHeaderStyle
+    public static GUIStyle UISubHeaderStyle
     {
         get
         {
             return new GUIStyle()
             {
-                fontSize = 14,
+                fontSize = 12,
                 normal = new GUIStyleState()
                 {
                     textColor = Color.white

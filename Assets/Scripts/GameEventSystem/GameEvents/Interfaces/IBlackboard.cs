@@ -11,5 +11,6 @@ public interface IBlackboard
     public string name { get; }
 
     public void AddVariable(VariableDefinition variable);
+    public void RemoveVariable(VariableDefinition variable);
     public VariableDefinition GetVariableByID(string id);
 }

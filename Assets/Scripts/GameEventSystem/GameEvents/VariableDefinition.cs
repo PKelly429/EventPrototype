@@ -24,6 +24,7 @@ public abstract class VariableDefinition
         }
     }
     
+    public event Action onRemoved;
     public event Action<string> onNameChanged;
     public string name 
     {
@@ -46,6 +47,11 @@ public abstract class VariableDefinition
     public void GenerateId()
     {
         uniqueId = GUID.Generate().ToString();
+    }
+
+    public void Delete()
+    {
+        onRemoved?.Invoke();
     }
 }
 

@@ -88,10 +88,13 @@ public class ShowModalWindowEffect : Effect
 
         string prefix = isShowing ? "[-]" : "[+]";
         EditorGUILayout.BeginVertical();
-        if (GUILayout.Button($"{prefix} Show Modal Window", EditorUtils.UIHeaderStyle))
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button($"{prefix} Show Modal Window", EditorUtils.UISubHeaderStyle))
         {
             isShowing = !isShowing;
         }
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
         EditorGUILayout.Space(5);
 
         if (!isShowing)
@@ -100,9 +103,13 @@ public class ShowModalWindowEffect : Effect
             return;
         }
 
-        EditorGUILayout.LabelField("Header:");
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.Space(EditorUtils.IndentSize);
+        EditorGUILayout.BeginVertical();
+
+        EditorGUILayout.LabelField("Header Text:");
         header.DrawEditorWindowUI(localBlackboard);
-        EditorGUILayout.LabelField("Body:");
+        EditorGUILayout.LabelField("Body Text:");
         body.DrawEditorWindowUI(localBlackboard);
         EditorUtils.DrawUILine();
         foreach (var option in options)
@@ -136,6 +143,9 @@ public class ShowModalWindowEffect : Effect
             newOption.SetBlackboards(localBlackboard);
             options.Add(newOption);
         }
+        
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
 
         EditorGUILayout.EndVertical();
     }
@@ -166,6 +176,9 @@ public class ShowModalWindowOption : EventComponent
     }
     
     #if UNITY_EDITOR
+
+    private bool _showChoice;
+    private bool _showEffect;
     private GUIStyle choiceHeaderStyle
     {
         get
@@ -191,21 +204,62 @@ public class ShowModalWindowOption : EventComponent
         }
 
         EditorGUILayout.BeginVertical();
-        EditorGUILayout.LabelField("Choice", choiceHeaderStyle);
-        EditorGUILayout.LabelField("Text:");
-        text.DrawEditorWindowUI(localBlackboard);
-        if (effect != null)
+        string choicePrefix = _showChoice ? "[-]" : "[+]";
+
+        EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
+        if (GUILayout.Button($"{choicePrefix} Choice", EditorUtils.UISubHeaderStyle))
         {
-            effect.DrawEditorWindowUI(localBlackboard);
+            _showChoice = !_showChoice;
         }
-        if (GUILayout.Button("Set Effect:", EditorStyles.popup))
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
+        if (_showChoice)
         {
-            var provider = new EffectSearchProvider((type) =>
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.Space(EditorUtils.IndentSize);
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.Space(EditorUtils.IndentSize);
+            text.DrawEditorWindowUI(localBlackboard);
+            if (effect == null)
             {
-                AddEffect((Effect)Activator.CreateInstance(type));
-            });
-            SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)),
-                provider);
+                EditorGUILayout.LabelField("No Effect", EditorUtils.UISubHeaderStyle);
+            }
+
+            if (effect != null)
+            {
+                string effectPrefix = _showEffect ? "[-]" : "[+]";
+                if (GUILayout.Button($"{effectPrefix} Effect", EditorUtils.UISubHeaderStyle))
+                {
+                    _showEffect = !_showEffect;
+                }
+
+                if (_showEffect)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.Space(EditorUtils.IndentSize);
+                    EditorGUILayout.BeginVertical();
+                    effect.DrawEditorWindowUI(localBlackboard);
+                    EditorGUILayout.EndVertical();
+                    EditorGUILayout.EndHorizontal();
+                }
+            }
+
+            EditorGUILayout.Space(5);
+            if (GUILayout.Button("Remove Effect"))
+            {
+                effect = null;
+            }
+            EditorGUILayout.Space(5);
+            if (GUILayout.Button("Set Effect:", EditorStyles.popup))
+            {
+                var provider =
+                    new EffectSearchProvider((type) => { AddEffect((Effect)Activator.CreateInstance(type)); });
+                SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)),
+                    provider);
+            }
+            
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
         }
         EditorGUILayout.EndVertical();
     }

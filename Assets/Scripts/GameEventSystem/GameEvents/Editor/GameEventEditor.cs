@@ -52,10 +52,10 @@ public class GameEventEditor : Editor
         DrawEffects(gameEvent);
         
         EditorGUILayout.Space(spaceSize);
-        if (GUILayout.Button("Fire Event"))
-        {
-            gameEvent.FireEvent();
-        }
+        // if (GUILayout.Button("Fire Event"))
+        // {
+        //     gameEvent.FireEvent();
+        // }
         
         EditorGUILayout.EndVertical();
         UnityEditor.EditorUtility.SetDirty(gameEvent);
@@ -67,10 +67,13 @@ public class GameEventEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("_uniqueID"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("blackboards"));
         string prefix = showVariables ? "[-]" : "[+]";
+        EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button($"{prefix} Variables", SubHeadingStyle))
         {
             showVariables = !showVariables;
         }
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
         if (showVariables)
         {
             EditorGUILayout.BeginHorizontal();
@@ -90,7 +93,7 @@ public class GameEventEditor : Editor
 
             foreach (var removed in removedVariables)
             {
-                gameEvent.definedVariables.Remove(removed);
+                gameEvent.RemoveVariable(removed);
             }
 
             removedVariables.Clear();
@@ -114,16 +117,21 @@ public class GameEventEditor : Editor
     private void DrawTriggers(GameEvent gameEvent)
     {
         var prefix = showTriggers ? "[-]" : "[+]";
+        EditorGUILayout.BeginHorizontal();
+        gameEvent.triggers ??= new List<Trigger>();
         if (GUILayout.Button($"{prefix} Triggers ({gameEvent.triggers.Count})", SubHeadingStyle))
         {
             showTriggers = !showTriggers;
         }
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
         
         if (showTriggers)
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.Space(indentSize);
             EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+            EditorGUILayout.Space(spaceSize);
             foreach (var trigger in gameEvent.triggers)
             {
                 EditorGUILayout.BeginHorizontal("box");
@@ -165,16 +173,21 @@ public class GameEventEditor : Editor
     private void DrawEffects(GameEvent gameEvent)
     {
         var prefix = showEffects ? "[-]" : "[+]";
-        if (GUILayout.Button($"{prefix} Effects ({gameEvent.triggers.Count})", SubHeadingStyle))
+        EditorGUILayout.BeginHorizontal();
+        gameEvent.effects ??= new List<Effect>();
+        if (GUILayout.Button($"{prefix} Effects ({gameEvent.effects.Count})", SubHeadingStyle))
         {
             showEffects = !showEffects;
         }
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
         
         if (showEffects)
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.Space(indentSize);
             EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+            EditorGUILayout.Space(spaceSize);
             DrawComponentList(gameEvent, gameEvent.effects);
 
             EditorGUILayout.Space(spaceSize);

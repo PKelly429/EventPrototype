@@ -25,6 +25,12 @@ public class GameEvent : ScriptableObject, IBlackboard
         definedVariables.Add(variable);
     }
 
+    public void RemoveVariable(VariableDefinition variable)
+    {
+        variable.Delete();
+        definedVariables.Remove(variable);
+    }
+
     public VariableDefinition GetVariableByID(string id)
     {
         foreach (var variable in definedVariables)

@@ -50,7 +50,7 @@ public class AssetBlackboardEditor : Editor
 
         foreach (var removed in removedVariables)
         {
-            blackboard.definedVariables.Remove(removed);
+            blackboard.RemoveVariable(removed);
         }
 
         removedVariables.Clear();

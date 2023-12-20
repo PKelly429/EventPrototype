@@ -46,9 +46,21 @@ public class ClickOnObjectTrigger : Trigger
     }
 
 #if UNITY_EDITOR
+    private bool _show;
     public override void DrawEditorWindowUI(IBlackboard localBlackboard)
     {
-        EventEditorUtils.DrawLinkText("Clickable object {0} clicked.", localBlackboard, objectReference);
+        string prefix = _show ? "[-]" : "[+]";
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button($"{prefix} OnClick", EditorUtils.UISubHeaderStyle))
+        {
+            _show = !_show;
+        }
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
+        if (_show)
+        {
+            EventEditorUtils.DrawLinkText("Clickable object {0} clicked.", localBlackboard, objectReference);
+        }
     }
     #endif
 }
