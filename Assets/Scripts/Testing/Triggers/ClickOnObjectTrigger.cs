@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using GameEventSystem;
 using UnityEngine;
 #if UNITY_EDITOR
-using GameEventSystem.GameEvents.Editor;
+using GameEventSystem.GameEventSystem.GameEvents.Editor;
 using UnityEditor;
 #endif
 

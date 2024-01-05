@@ -1,0 +1,18 @@
+{
+    "name": "GameEventSystemEditor",
+    "rootNamespace": "GameEventSystem.Editor",
+    "references": [
+        "GUID:e4f307ff897b5364fa2742c3867f1d06"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
