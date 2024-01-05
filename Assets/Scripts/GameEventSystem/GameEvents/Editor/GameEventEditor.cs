@@ -47,6 +47,9 @@ public class GameEventEditor : Editor
 
         EditorGUILayout.Space(spaceSize);
         DrawTriggers(gameEvent);
+        
+        EditorGUILayout.Space(spaceSize);
+        DrawConditions(gameEvent);
 
         EditorGUILayout.Space(spaceSize);
         DrawEffects(gameEvent);
@@ -159,6 +162,43 @@ public class GameEventEditor : Editor
                 var provider = new TriggerSearchProvider((type) =>
                 {
                     gameEvent.AddTrigger((Trigger)Activator.CreateInstance(type));
+                });
+                SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)),
+                    provider);
+            }
+
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndHorizontal();
+        }
+    }
+    
+    private void DrawConditions(GameEvent gameEvent)
+    {
+        var prefix = showConditions ? "[-]" : "[+]";
+        EditorGUILayout.BeginHorizontal();
+        gameEvent.effects ??= new List<Effect>();
+        if (GUILayout.Button($"{prefix} Conditions ({gameEvent.conditions.Count})", SubHeadingStyle))
+        {
+            showConditions = !showConditions;
+        }
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.EndHorizontal();
+        
+        if (showConditions)
+        {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.Space(indentSize);
+            EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+            EditorGUILayout.Space(spaceSize);
+            DrawComponentList(gameEvent, gameEvent.conditions);
+
+            EditorGUILayout.Space(spaceSize);
+            if (GUILayout.Button("Add Condition:", EditorStyles.popup))
+            {
+                var provider = new ConditionSearchProvider((type) =>
+                {
+                    gameEvent.AddCondition((Condition)Activator.CreateInstance(type));
                 });
                 SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)),
                     provider);

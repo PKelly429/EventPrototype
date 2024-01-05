@@ -12,68 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8bdd22551ed3244a9ca748c31e45137, type: 3}
   m_Name: ShowModalWindow
   m_EditorClassIdentifier: 
-  blackboards: []
+  blackboards:
+  - {fileID: 11400000, guid: b7a7e73b10c13034484dc10f37124413, type: 2}
   triggers:
-  - rid: 8146218276125933571
+  - rid: 2556835229906239496
   conditions: []
-  effects:
-  - rid: 8146218276125933568
+  effects: []
   _uniqueID: 43d4f4c64afb1ff4ebbae8eb0a997a42
   _definedVariables:
-  - rid: 8146218276125933570
+  - rid: 2556835229906239495
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 8146218276125933568
-      type: {class: ShowModalWindowEffect, ns: , asm: Assembly-CSharp}
-      data:
-        header:
-          text: Crew Member Clicked
-          parameters: []
-        body:
-          text: '{0} has been clicked'
-          parameters:
-          - refId: 0a9f797c38f517a43a0f2f03f13ef283
-            blackboardId: 43d4f4c64afb1ff4ebbae8eb0a997a42
-            name: ClickedCrew.Name
-            propertyName: Name
-        options:
-        - text:
-            text: Log {0}
-            parameters:
-            - refId: 0a9f797c38f517a43a0f2f03f13ef283
-              blackboardId: 43d4f4c64afb1ff4ebbae8eb0a997a42
-              name: ClickedCrew.Name
-              propertyName: Name
-          effect:
-            rid: 8146218276125933572
-        - text:
-            text: Do Nothing
-            parameters: []
-          effect:
-            rid: -2
-    - rid: 8146218276125933570
+    - rid: 2556835229906239495
       type: {class: CrewDefinition, ns: , asm: Assembly-CSharp}
       data:
-        uniqueId: 0a9f797c38f517a43a0f2f03f13ef283
+        uniqueId: 79845e5ebf98a4e4abe12b8cce103a4e
         _name: ClickedCrew
-    - rid: 8146218276125933571
+    - rid: 2556835229906239496
       type: {class: ClickOnObjectTrigger, ns: , asm: Assembly-CSharp}
       data:
         objectReference:
-          refId: 0a9f797c38f517a43a0f2f03f13ef283
+          refId: 79845e5ebf98a4e4abe12b8cce103a4e
           blackboardId: 43d4f4c64afb1ff4ebbae8eb0a997a42
           name: ClickedCrew
           propertyName: 
-    - rid: 8146218276125933572
-      type: {class: LogEffect, ns: , asm: Assembly-CSharp}
-      data:
-        logString:
-          text: '{0}'
-          parameters:
-          - refId: 0a9f797c38f517a43a0f2f03f13ef283
-            blackboardId: 43d4f4c64afb1ff4ebbae8eb0a997a42
-            name: ClickedCrew.Name
-            propertyName: Name

@@ -98,6 +98,12 @@ public class GameEvent : ScriptableObject, IBlackboard
         trigger.SetBlackboards(this);
     }
     
+    public void AddCondition(Condition condition)
+    {
+        conditions.Add(condition);
+        condition.SetBlackboards(this);
+    }
+    
     public void AddEffect(Effect effect)
     {
         effects.Add(effect);

@@ -62,5 +62,5 @@ public class ClickOnObjectTrigger : Trigger
             EventEditorUtils.DrawLinkText("Clickable object {0} clicked.", localBlackboard, objectReference);
         }
     }
-    #endif
+#endif
 }
