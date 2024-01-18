@@ -8,6 +8,14 @@ using UnityEngine;
 
 namespace GameEventSystem
 {
+    public class NodeSearchProvider : TypeSearchProvider<GameEventNode>
+    {
+        public Vector2 MousePosition;
+        public NodeSearchProvider(Action<Type> callback) : base(callback)
+        {
+        }
+    }
+    
     public class TriggerSearchProvider : TypeSearchProvider<Trigger>
     {
         public TriggerSearchProvider(Action<Type> callback) : base(callback)

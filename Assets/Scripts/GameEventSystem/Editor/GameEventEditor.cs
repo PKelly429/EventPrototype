@@ -35,6 +35,13 @@ namespace GameEventSystem.Editor
 
         public override void OnInspectorGUI()
         {
+            if (GUILayout.Button("Open Editor"))
+            {
+                GameEventEditorWindow.Open((GameEvent)target);
+            }
+
+            return;
+            
             GameEvent gameEvent = (GameEvent)target;
             serializedObject.Update();
             EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));

@@ -9,6 +9,9 @@ namespace GameEventSystem
     [Serializable]
     public class GameEvent : ScriptableObject, IBlackboard
     {
+        [SerializeReference] public List<GameEventNode> _nodes;
+        
+        
         [SerializeReference] public List<AssetBlackboard> blackboards;
         [SerializeReference] public List<Trigger> triggers;
         [SerializeReference] public List<Condition> conditions;
