@@ -18,6 +18,7 @@ public class GameEvent : ScriptableObject, IBlackboard
     [SerializeReference] private List<VariableDefinition> _definedVariables = new List<VariableDefinition>();
     public List<VariableDefinition> definedVariables => _definedVariables;
     public string uniqueID => _uniqueID;
+    [NonSerialized] public bool blackboardsSetup;
     
     public void AddVariable(VariableDefinition variable)
     {
@@ -47,28 +48,40 @@ public class GameEvent : ScriptableObject, IBlackboard
 
     public void Setup()
     {
+        SetupBlackboards();
+        foreach (var trigger in triggers)
+        {
+            trigger.OnTriggerActivated += TryFireEvent;
+            trigger.OnEnable();
+        }
+    }
+
+    public void SetupBlackboards()
+    {
+        if (triggers == null || conditions == null || effects == null)
+        {
+            return;
+        }
+        
         foreach (var trigger in triggers)
         {
             trigger.SetBlackboards(this);
-            trigger.OnTriggerActivated += TryFireEvent;
-            trigger.OnEnable();
+        }
+        foreach (var condition in conditions)
+        {
+            condition.SetBlackboards(this);
         }
         foreach (var effect in effects)
         {
             effect.SetBlackboards(this);
         }
+
+        blackboardsSetup = true;
     }
     
     public void OnEnable()
     {
-        foreach (var trigger in triggers)
-        {
-            trigger.SetBlackboards(this);
-        }
-        foreach (var effects in effects)
-        {
-            effects.SetBlackboards(this);
-        }
+        SetupBlackboards();
     }
 
     private void TryFireEvent()

@@ -10,6 +10,7 @@ public class Crew : ClickableObject
 
     [ExposeProperty] public string Role => role.ToString();
     [ExposeProperty] public bool Alive { get; set; }
+    [ExposeProperty] public string SomeOtherProperty { get; set; }
 }
 
 [AddTypeMenu("Entity/Crew", 2)]

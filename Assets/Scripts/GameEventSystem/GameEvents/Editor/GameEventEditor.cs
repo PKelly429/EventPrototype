@@ -42,6 +42,11 @@ public class GameEventEditor : Editor
         
         //DrawPropertiesExcluding(serializedObject, "triggers");
 
+        if (!gameEvent.blackboardsSetup)
+        {
+            gameEvent.SetupBlackboards();
+        }
+        
         DrawVariables(gameEvent);
         
 
@@ -177,7 +182,7 @@ public class GameEventEditor : Editor
     {
         var prefix = showConditions ? "[-]" : "[+]";
         EditorGUILayout.BeginHorizontal();
-        gameEvent.effects ??= new List<Effect>();
+        gameEvent.conditions ??= new List<Condition>();
         if (GUILayout.Button($"{prefix} Conditions ({gameEvent.conditions.Count})", SubHeadingStyle))
         {
             showConditions = !showConditions;
