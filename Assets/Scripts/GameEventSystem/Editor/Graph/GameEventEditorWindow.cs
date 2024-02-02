@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace GameEventSystem.Editor
@@ -31,6 +34,29 @@ namespace GameEventSystem.Editor
             newWindow.Load(target);
         }
 
+        private void OnEnable()
+        {
+            if (_currentEvent != null)
+            {
+                DrawGraph();
+            }
+        }
+
+        // private void OnDisable()
+        // {
+        //     if (_currentEvent != null)
+        //     {
+        //         rootVisualElement.Remove(_currentView);
+        //     }
+        // }
+
+        // private void OnGUI()
+        // {
+        //     if (_currentEvent == null) return;
+        //
+        //     hasUnsavedChanges = EditorUtility.IsDirty(_currentEvent);
+        // }
+
         public void Load(GameEvent target)
         {
             _currentEvent = target;
@@ -40,7 +66,9 @@ namespace GameEventSystem.Editor
         private void DrawGraph()
         {
             _serializedObject = new SerializedObject(_currentEvent);
-            _currentView = new GameEventView(_serializedObject, this);
+            _currentView = new GameEventView();
+            _currentView.InitGraph(_serializedObject, this);
+
             rootVisualElement.Add(_currentView);
         }
     }

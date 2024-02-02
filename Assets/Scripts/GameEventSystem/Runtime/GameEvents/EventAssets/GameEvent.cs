@@ -9,16 +9,23 @@ namespace GameEventSystem
     [Serializable]
     public class GameEvent : ScriptableObject, IBlackboard
     {
-        [SerializeReference] public List<GameEventNode> _nodes;
-        
-        
-        [SerializeReference] public List<AssetBlackboard> blackboards;
+        [SerializeReference] public List<GameEventNode> Nodes;
+        [SerializeField] public List<GameEventConnection> AllConnections;
+
+        //[SerializeReference] public List<AssetBlackboard> blackboards;
         [SerializeReference] public List<Trigger> triggers;
         [SerializeReference] public List<Condition> conditions;
         [SerializeReference] public List<Effect> effects;
 
         [ScriptableObjectIdAttribute] [SerializeField]
         private string _uniqueID;
+
+
+        private List<GameEventNode> _activeNodes = new List<GameEventNode>();
+        public void ProcessEvent()
+        {
+            
+        }
 
         #region IBlackboard
 
@@ -36,6 +43,13 @@ namespace GameEventSystem
         {
             variable.Delete();
             definedVariables.Remove(variable);
+        }
+
+        public void RemoveVariableById(string id)
+        {
+            var variable = GetVariableByID(id);
+            if (variable == null) return;
+            RemoveVariable(variable);
         }
 
         public VariableDefinition GetVariableByID(string id)
@@ -68,18 +82,18 @@ namespace GameEventSystem
             }
         }
 
-        public void OnEnable()
-        {
-            foreach (var trigger in triggers)
-            {
-                trigger.SetBlackboards(this);
-            }
-
-            foreach (var effects in effects)
-            {
-                effects.SetBlackboards(this);
-            }
-        }
+        // public void OnEnable()
+        // {
+        //     foreach (var trigger in triggers)
+        //     {
+        //         trigger.SetBlackboards(this);
+        //     }
+        //
+        //     foreach (var effects in effects)
+        //     {
+        //         effects.SetBlackboards(this);
+        //     }
+        // }
 
         private void TryFireEvent()
         {

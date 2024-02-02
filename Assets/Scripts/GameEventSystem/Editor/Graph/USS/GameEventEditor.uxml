@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <GameEventSystem.Editor.SplitView fixed-pane-initial-dimension="200">
+        <ui:VisualElement name="left-panel">
+            <GameEventSystem.Editor.InspectorView name="inspector-panel">
+                <ui:VisualElement name="inspector-header">
+                    <ui:Label text="Label" display-tooltip-when-elided="true" name="inspector-header-label" />
+                </ui:VisualElement>
+            </GameEventSystem.Editor.InspectorView>
+        </ui:VisualElement>
+        <ui:VisualElement name="right-panel">
+            <GameEventSystem.Editor.GameEventView focusable="true" />
+        </ui:VisualElement>
+    </GameEventSystem.Editor.SplitView>
+</ui:UXML>

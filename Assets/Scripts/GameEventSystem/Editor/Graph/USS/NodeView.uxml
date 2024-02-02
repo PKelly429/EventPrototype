@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Scripts/GameEventSystem/Editor/Graph/USS/Node.uss?fileID=7433441132597879392&amp;guid=20cc5c539fef94b4599920ed34b616d7&amp;type=3#Node" />
+    <ui:VisualElement name="node-border">
+        <ui:VisualElement name="contents">
+            <ui:VisualElement name="top">
+                <ui:VisualElement name="input" style="justify-content: flex-end; max-height: none; max-width: none;" />
+                <ui:VisualElement name="divider" class="horizontal" />
+                <ui:VisualElement name="title">
+                    <ui:Label name="title-label" text="Node" class="unity-text-element unity-label" />
+                    <ui:VisualElement name="title-button-container">
+                        <ui:VisualElement name="collapse-button">
+                            <ui:VisualElement name="icon" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label text="Node Description" display-tooltip-when-elided="true" name="description-label" style="font-size: 10px; color: rgb(220, 221, 225);" />
+                <ui:VisualElement name="divider" class="vertical" />
+                <ui:VisualElement name="output" style="justify-content: flex-start;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="selection-border" picking-mode="Ignore" />
+</ui:UXML>

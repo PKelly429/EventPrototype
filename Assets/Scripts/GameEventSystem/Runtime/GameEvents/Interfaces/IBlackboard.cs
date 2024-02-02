@@ -14,6 +14,7 @@ namespace GameEventSystem
 
         public void AddVariable(VariableDefinition variable);
         public void RemoveVariable(VariableDefinition variable);
+        public void RemoveVariableById(string id);
         public VariableDefinition GetVariableByID(string id);
     }
 }

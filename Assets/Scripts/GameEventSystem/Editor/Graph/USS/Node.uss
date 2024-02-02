@@ -1,0 +1,120 @@
+.game-event-node {
+    border-radius: 10;
+    min-width: 150px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: rgb(245, 246, 250);
+}
+
+.game-event-node-selected {
+    border-radius: 10;
+    background-color: rgb(128, 128, 196);
+}
+
+.node_data {
+    background-color: rgb(64, 64, 64);
+    border-width: 5;
+}
+
+#node-border {
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left-color: rgb(47, 54, 64);
+    border-right-color: rgb(47, 54, 64);
+    border-top-color: rgb(47, 54, 64);
+    border-bottom-color: rgb(47, 54, 64);
+}
+
+#selection-border {
+    background-color: rgba(0, 0, 0, 0);
+    border-left-color: rgb(64, 115, 158);
+    border-right-color: rgb(64, 115, 158);
+    border-top-color: rgb(64, 115, 158);
+    border-bottom-color: rgb(64, 115, 158);
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#title {
+    background-color: rgb(47, 54, 64);
+    -unity-font-style: bold;
+    font-size: 14px;
+    -unity-text-align: upper-center;
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+#contents {
+    background-color: rgb(53, 59, 72);
+}
+
+#input {
+    align-items: center;
+    -unity-text-align: upper-center;
+    white-space: nowrap;
+    font-size: 1px;
+    justify-content: center;
+    min-height: 20px;
+}
+
+#output {
+    align-items: center;
+    justify-content: center;
+    -unity-text-align: upper-center;
+    white-space: nowrap;
+}
+
+#divider {
+    min-height: 2px;
+    background-color: rgb(113, 128, 147);
+}
+
+:hover > #selection-border {
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+}
+
+:selected > #selection-border {
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+}
+
+:hover:selected > #selection-border {
+    border-left-color: rgb(72, 126, 176);
+    border-right-color: rgb(72, 126, 176);
+    border-top-color: rgb(72, 126, 176);
+    border-bottom-color: rgb(72, 126, 176);
+}
+
+.trigger-node #input {
+    background-color: rgb(0, 151, 230);
+}
+
+.effect-node #input {
+    background-color: rgb(68, 189, 50);
+}

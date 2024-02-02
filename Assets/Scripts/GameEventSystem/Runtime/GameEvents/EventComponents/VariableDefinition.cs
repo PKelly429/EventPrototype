@@ -7,7 +7,7 @@ using UnityEngine;
 namespace GameEventSystem
 {
     [Serializable]
-    public abstract class VariableDefinition
+    public abstract class VariableDefinition : ScriptableObject
     {
         public string uniqueId;
         [SerializeField] private string _name;
@@ -60,7 +60,7 @@ namespace GameEventSystem
     }
 
     [AddTypeMenu("skip", 999)]
-    public class Variable<T> : VariableDefinition
+    public abstract class Variable<T> : VariableDefinition
     {
         private T _value;
         public override Type type => typeof(T);
@@ -72,38 +72,48 @@ namespace GameEventSystem
         }
     }
 
-    [AddTypeMenu("Value/Int")]
+    [AddTypeMenu("BuiltIn/Int")]
     public class IntVariable : Variable<int>
     {
     }
 
-    [AddTypeMenu("Value/Float")]
+    [AddTypeMenu("BuiltIn/Float")]
     public class FloatVariable : Variable<float>
     {
     }
 
-    [AddTypeMenu("Value/Bool")]
+    [AddTypeMenu("BuiltIn/Bool")]
     public class BoolVariable : Variable<bool>
     {
     }
 
-    [AddTypeMenu("Value/String")]
+    [AddTypeMenu("BuiltIn/String")]
     public class StringVariable : Variable<string>
     {
     }
 
-    [AddTypeMenu("Value/Vector2")]
+    [AddTypeMenu("BuiltIn/Colour")]
+    public class ColourVariable : Variable<Color>
+    {
+    }
+
+    [AddTypeMenu("BuiltIn/Vector2")]
     public class Vector2Variable : Variable<Vector2>
     {
     }
 
-    [AddTypeMenu("Value/Vector3")]
+    [AddTypeMenu("BuiltIn/Vector3")]
     public class Vector3Variable : Variable<Vector3>
     {
     }
 
-    [AddTypeMenu("Value/Rotation")]
+    [AddTypeMenu("BuiltIn/Rotation")]
     public class RotationVariable : Variable<Quaternion>
+    {
+    }
+    
+    [AddTypeMenu("BuiltIn/Object")]
+    public class ObjectVariable : Variable<UnityEngine.Object>
     {
     }
 }

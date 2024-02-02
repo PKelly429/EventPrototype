@@ -33,6 +33,13 @@ namespace GameEventSystem
             variable.Delete();
             definedVariables.Remove(variable);
         }
+        
+        public void RemoveVariableById(string id)
+        {
+            var variable = GetVariableByID(id);
+            if (variable == null) return;
+            RemoveVariable(variable);
+        }
 
         public VariableDefinition GetVariableByID(string id)
         {

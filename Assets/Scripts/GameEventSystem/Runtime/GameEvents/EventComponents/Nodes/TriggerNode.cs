@@ -8,4 +8,10 @@ namespace GameEventSystem
     {
 
     }
+    
+    [NodeInfo("On Start", "", 0, false, true)]
+    public class OnStartTrigger : TriggerNode
+    {
+
+    }
 }
