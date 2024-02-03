@@ -49,7 +49,7 @@ namespace GameEventSystem.Editor
 
 			var field = new BlackboardField
 			{
-				text = property.name,
+				text = property.Name,
 				typeText = valueType.Name,
 				userData = property
 			};

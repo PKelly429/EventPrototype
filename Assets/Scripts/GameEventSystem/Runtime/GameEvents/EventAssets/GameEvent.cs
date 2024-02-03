@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace GameEventSystem
@@ -9,8 +10,8 @@ namespace GameEventSystem
     [Serializable]
     public class GameEvent : ScriptableObject, IBlackboard
     {
-        [SerializeReference] public List<GameEventNode> Nodes;
-        [SerializeField] public List<GameEventConnection> AllConnections;
+        public List<GameEventNode> Nodes = new List<GameEventNode>();
+        public List<GameEventConnection> AllConnections = new List<GameEventConnection>();
 
         //[SerializeReference] public List<AssetBlackboard> blackboards;
         [SerializeReference] public List<Trigger> triggers;
@@ -21,28 +22,74 @@ namespace GameEventSystem
         private string _uniqueID;
 
 
-        private List<GameEventNode> _activeNodes = new List<GameEventNode>();
-        public void ProcessEvent()
+        #region Editor Compatibility
+#if UNITY_EDITOR
+        public GameEventNode AddNode(Type type)
         {
+            var node = ScriptableObject.CreateInstance(type) as GameEventNode;
+            node.name = $"{type.Name}";
+            node.GenerateGUID();
+            Nodes.Add(node);
+
+            if (!Application.isPlaying)
+            {
+                AssetDatabase.AddObjectToAsset(node, this);
+            }
+
+            Undo.RegisterCreatedObjectUndo(node, "GameEvent (CreateNode)");
+            AssetDatabase.SaveAssets();
             
+            return node;
+        }
+
+        public void RemoveNode(GameEventNode node)
+        {
+            Nodes.Remove(node);
+            AssetDatabase.RemoveObjectFromAsset(node);
+            Undo.DestroyObjectImmediate(node);
+            AssetDatabase.SaveAssets();
+        }
+#endif
+    #endregion
+
+        private List<GameEventNode> _activeNodes = new List<GameEventNode>();
+        public void Setup()
+        {
+            foreach (var node in Nodes)
+            {
+                node.Setup();
+            }
         }
 
         #region IBlackboard
 
-        [SerializeReference] private List<VariableDefinition> _definedVariables = new List<VariableDefinition>();
+        [SerializeField] private List<VariableDefinition> _definedVariables = new List<VariableDefinition>();
+        
         public List<VariableDefinition> definedVariables => _definedVariables;
         public string uniqueID => _uniqueID;
 
-        public void AddVariable(VariableDefinition variable)
+        public VariableDefinition AddVariable(Type type)
         {
+            VariableDefinition variable = ScriptableObject.CreateInstance(type) as VariableDefinition;
+            variable.Name = $"new{variable.type.Name}";
+            
             variable.GenerateId();
             definedVariables.Add(variable);
+            
+            AssetDatabase.AddObjectToAsset(variable, this);
+            AssetDatabase.SaveAssets();
+
+            return variable;
         }
 
         public void RemoveVariable(VariableDefinition variable)
         {
             variable.Delete();
             definedVariables.Remove(variable);
+            
+            AssetDatabase.RemoveObjectFromAsset(variable);
+            Undo.DestroyObjectImmediate(variable);
+            AssetDatabase.SaveAssets();
         }
 
         public void RemoveVariableById(string id)
@@ -67,20 +114,20 @@ namespace GameEventSystem
 
         #endregion
 
-        public void Setup()
-        {
-            foreach (var trigger in triggers)
-            {
-                trigger.SetBlackboards(this);
-                trigger.OnTriggerActivated += TryFireEvent;
-                trigger.OnEnable();
-            }
-
-            foreach (var effect in effects)
-            {
-                effect.SetBlackboards(this);
-            }
-        }
+        // public void Setup()
+        // {
+        //     foreach (var trigger in triggers)
+        //     {
+        //         trigger.SetBlackboards(this);
+        //         trigger.OnTriggerActivated += TryFireEvent;
+        //         trigger.OnEnable();
+        //     }
+        //
+        //     foreach (var effect in effects)
+        //     {
+        //         effect.SetBlackboards(this);
+        //     }
+        // }
 
         // public void OnEnable()
         // {
@@ -95,43 +142,43 @@ namespace GameEventSystem
         //     }
         // }
 
-        private void TryFireEvent()
-        {
-            foreach (var condition in conditions)
-            {
-                if (!condition.Evaluate())
-                {
-                    return;
-                }
-            }
-
-            FireEvent();
-        }
-
-        public void FireEvent()
-        {
-            foreach (var effect in effects)
-            {
-                effect.Execute();
-            }
-        }
-
-        public void AddTrigger(Trigger trigger)
-        {
-            triggers.Add(trigger);
-            trigger.SetBlackboards(this);
-        }
-
-        public void AddCondition(Condition condition)
-        {
-            conditions.Add(condition);
-            condition.SetBlackboards(this);
-        }
-
-        public void AddEffect(Effect effect)
-        {
-            effects.Add(effect);
-            effect.SetBlackboards(this);
-        }
+        // private void TryFireEvent()
+        // {
+        //     foreach (var condition in conditions)
+        //     {
+        //         if (!condition.Evaluate())
+        //         {
+        //             return;
+        //         }
+        //     }
+        //
+        //     FireEvent();
+        // }
+        //
+        // public void FireEvent()
+        // {
+        //     foreach (var effect in effects)
+        //     {
+        //         effect.Execute();
+        //     }
+        // }
+        //
+        // public void AddTrigger(Trigger trigger)
+        // {
+        //     triggers.Add(trigger);
+        //     trigger.SetBlackboards(this);
+        // }
+        //
+        // public void AddCondition(Condition condition)
+        // {
+        //     conditions.Add(condition);
+        //     condition.SetBlackboards(this);
+        // }
+        //
+        // public void AddEffect(Effect effect)
+        // {
+        //     effects.Add(effect);
+        //     effect.SetBlackboards(this);
+        // }
     }
 }

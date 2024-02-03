@@ -37,7 +37,7 @@ namespace GameEventSystem
                     continue;
                 }
 
-                var entry = new SearchTreeEntry(new GUIContent(variableDefinition.name));
+                var entry = new SearchTreeEntry(new GUIContent(variableDefinition.Name));
                 entry.level = 2;
                 entry.userData = new VariableSelection()
                 {
@@ -64,7 +64,7 @@ namespace GameEventSystem
                         continue;
                     }
 
-                    var entry = new SearchTreeEntry(new GUIContent(variableDefinition.name));
+                    var entry = new SearchTreeEntry(new GUIContent(variableDefinition.Name));
                     entry.level = 2;
                     entry.userData = new VariableSelection()
                     {
@@ -92,7 +92,7 @@ namespace GameEventSystem
                 //     searchList.Add(new SearchTreeGroupEntry(new GUIContent(variableDefinition.name), level));
                 //     variableAdded = true;
                 // }
-                var entry = new SearchTreeEntry(new GUIContent($"{variableDefinition.name}.{property.Name}"));
+                var entry = new SearchTreeEntry(new GUIContent($"{variableDefinition.Name}.{property.Name}"));
                 entry.level = level;
                 entry.userData = new VariableSelection()
                 {

@@ -1,7 +1,5 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
 
 namespace GameEventSystem
 {
@@ -12,7 +10,7 @@ namespace GameEventSystem
 
         public string name { get; }
 
-        public void AddVariable(VariableDefinition variable);
+        public VariableDefinition AddVariable(Type type);
         public void RemoveVariable(VariableDefinition variable);
         public void RemoveVariableById(string id);
         public VariableDefinition GetVariableByID(string id);

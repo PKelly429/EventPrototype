@@ -22,10 +22,18 @@ namespace GameEventSystem
         public List<VariableDefinition> definedVariables => _definedVariables;
         public string uniqueID => _uniqueID;
 
-        public void AddVariable(VariableDefinition variable)
+        public VariableDefinition AddVariable(Type type)
         {
+            VariableDefinition variable = ScriptableObject.CreateInstance(type) as VariableDefinition;
+            variable.Name = $"new{variable.type.Name}";
+            
             variable.GenerateId();
             definedVariables.Add(variable);
+            
+            AssetDatabase.AddObjectToAsset(variable, this);
+            AssetDatabase.SaveAssets();
+
+            return variable;
         }
 
         public void RemoveVariable(VariableDefinition variable)

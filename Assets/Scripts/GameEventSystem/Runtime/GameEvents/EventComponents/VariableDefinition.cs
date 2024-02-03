@@ -10,7 +10,6 @@ namespace GameEventSystem
     public abstract class VariableDefinition : ScriptableObject
     {
         public string uniqueId;
-        [SerializeField] private string _name;
         public abstract Type type { get; }
         public abstract object value { get; set; }
 
@@ -29,13 +28,13 @@ namespace GameEventSystem
         public event Action onRemoved;
         public event Action<string> onNameChanged;
 
-        public string name
+        public string Name
         {
-            get => _name;
+            get => name;
             set
             {
-                if (_name == value) return;
-                _name = value;
+                if (name == value) return;
+                name = value;
                 if (onNameChanged != null)
                 {
                     onNameChanged(value);

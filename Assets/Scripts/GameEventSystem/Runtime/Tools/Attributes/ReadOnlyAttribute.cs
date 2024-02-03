@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace GameEventSystem
 {
-    public abstract class EffectNode : GameEventNode
+    public class ReadOnlyAttribute : PropertyAttribute
     {
+
     }
 }

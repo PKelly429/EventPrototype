@@ -118,3 +118,24 @@
 .effect-node #input {
     background-color: rgb(68, 189, 50);
 }
+
+.running #node-border {
+    border-left-color: rgba(225, 177, 44, 255);
+    border-right-color: rgba(225, 177, 44, 255);
+    border-top-color: rgba(225, 177, 44, 255);
+    border-bottom-color: rgba(225, 177, 44, 255);
+}
+
+.success #node-border {
+    border-left-color: rgba(68, 189, 50, 255);
+    border-right-color: rgba(68, 189, 50, 255);
+    border-top-color: rgba(68, 189, 50, 255);
+    border-bottom-color: rgba(68, 189, 50, 255);
+}
+
+.failure #node-border {
+    border-left-color: rgba(194, 54, 22, 255);
+    border-right-color: rgba(194, 54, 22, 255);
+    border-top-color: rgba(194, 54, 22, 255);
+    border-bottom-color: rgba(194, 54, 22, 255);
+}

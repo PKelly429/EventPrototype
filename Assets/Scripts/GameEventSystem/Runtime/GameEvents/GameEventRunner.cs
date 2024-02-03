@@ -11,12 +11,17 @@ namespace GameEventSystem
 
         [NonSerialized] private GameEvent _runningEvent;
 
+        public GameEvent GameEvent => _gameEvent;
+
         public void OnEnable()
         {
-            ExecuteEvent();
+            if (Application.isPlaying)
+            {
+                SetupEvent();
+            }
         }
 
-        private void ExecuteEvent()
+        private void SetupEvent()
         {
             if (_gameEvent == null) return;
             
@@ -30,7 +35,7 @@ namespace GameEventSystem
             gameObject.transform.parent = parent;
             GameEventRunner runner = gameObject.AddComponent<GameEventRunner>();
             runner._gameEvent = gameEvent;
-            runner.ExecuteEvent();
+            runner.SetupEvent();
         }
     }
 }

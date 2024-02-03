@@ -12,9 +12,12 @@ using Edge = UnityEditor.Experimental.GraphView.Edge;
 
 namespace GameEventSystem.Editor
 {
-    public class GameEventView : GraphView
+    public class GameEventView : GraphView, IDisposable
     {
         public new class UxmlFactory : UxmlFactory<GameEventView, GraphView.UxmlTraits> { }
+        
+        public Action<GameEventNodeView> OnNodeSelected;
+        public Action<GameEventNodeView> OnNodeUnselected;
 
         public override bool supportsWindowedBlackboard => true;
         public MiniMap Minimap { get; private set; }
@@ -25,8 +28,8 @@ namespace GameEventSystem.Editor
         private SerializedObject _serializedObject;
         private GameEventEditorWindow _window;
 
-        private List<GameEventEditorNode> _graphNodes;
-        private Dictionary<string, GameEventEditorNode> _nodeDictionary;
+        private List<GameEventNodeView> _graphNodes;
+        private Dictionary<string, GameEventNodeView> _nodeDictionary;
         private Dictionary<Edge, GameEventConnection> _connectionDictionary;
 
         public GameEventView()
@@ -45,26 +48,26 @@ namespace GameEventSystem.Editor
             this.AddManipulator(new RectangleSelector());
             this.AddManipulator(new ClickSelector());
             this.AddManipulator(new ContentZoomer());
+            
+            _graphNodes = new List<GameEventNodeView>();
+            _nodeDictionary = new Dictionary<string, GameEventNodeView>();
+            _connectionDictionary = new Dictionary<Edge, GameEventConnection>();
+            
+            graphViewChanged += OnGraphViewChanged;
+            Undo.undoRedoPerformed += ReloadView;
         }
 
-        public void InitGraph(SerializedObject serializedObject, GameEventEditorWindow window)
+        public void PopulateView(SerializedObject serializedObject, GameEventEditorWindow window)
         {
             _gameEvent = (GameEvent)serializedObject.targetObject;
             _serializedObject = serializedObject;
             _window = window;
 
-            _graphNodes = new List<GameEventEditorNode>();
-            _nodeDictionary = new Dictionary<string, GameEventEditorNode>();
-            _connectionDictionary = new Dictionary<Edge, GameEventConnection>();
+            if (_gameEvent == null) return;
 
-            DrawBlackboard();
-            DrawNodes();
-            DrawConnections();
-
-            graphViewChanged += OnGraphViewChanged;
-            Undo.undoRedoPerformed += ReloadView;
+            ReloadView();
         }
-        
+
         public void Dispose()
         {
             graphViewChanged -= OnGraphViewChanged;
@@ -73,26 +76,31 @@ namespace GameEventSystem.Editor
 
         private void ReloadView()
         {
-            graphViewChanged -= OnGraphViewChanged;
-
-            RemoveBlackboard();
-            RemoveNodes();
-            RemoveConnections();
+            ClearView();
             
-            DrawBlackboard();
+            //DrawBlackboard();
             DrawNodes();
             DrawConnections();
             
             graphViewChanged += OnGraphViewChanged;
         }
 
-        // public void CreateMinimap(float windowWidth)
-        // {
-        //     Minimap = new MiniMap { anchored = true };
-        //     Minimap.capabilities &= ~Capabilities.Movable;
-        //     Minimap.SetPosition(new Rect(windowWidth - 210, 30, 200, 140));
-        //     Add(Minimap);
-        // }
+        public void ClearView()
+        {
+            graphViewChanged -= OnGraphViewChanged; 
+            //RemoveBlackboard();
+            RemoveNodes();
+            RemoveConnections();
+        }
+
+        public void UpdateNodeStates() 
+        {
+            nodes.ForEach(n => 
+            {
+                GameEventNodeView view = n as GameEventNodeView;
+                view.UpdateState();
+            });
+        }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
         {
@@ -126,14 +134,14 @@ namespace GameEventSystem.Editor
             {
                 Undo.RecordObject(_serializedObject.targetObject, "Removed elements");
 
-                List<GameEventEditorNode> removedNodes = new List<GameEventEditorNode>();
-                removedNodes.AddRange(graphviewchange.elementsToRemove.OfType<GameEventEditorNode>());
+                List<GameEventNodeView> removedNodes = new List<GameEventNodeView>();
+                removedNodes.AddRange(graphviewchange.elementsToRemove.OfType<GameEventNodeView>());
                 
                 if (removedNodes.Count > 0)
                 {
                     for (int i = removedNodes.Count - 1; i >= 0; i--)
                     {
-                        RemoveNode(removedNodes[i]);
+                        DeleteNode(removedNodes[i]);
                     }
                 }
 
@@ -152,8 +160,14 @@ namespace GameEventSystem.Editor
             if (graphviewchange.movedElements != null)
             {
                 Undo.RecordObject(_serializedObject.targetObject, "Moved elements");
+                
+                nodes.ForEach((n) =>
+                {
+                    GameEventNodeView view = n as GameEventNodeView;
+                    view.SortChildren();
+                });
 
-                foreach (var editorNode in graphviewchange.movedElements.OfType<GameEventEditorNode>())
+                foreach (var editorNode in graphviewchange.movedElements.OfType<GameEventNodeView>())
                 {
                     editorNode.SavePosition();
                 }
@@ -177,15 +191,14 @@ namespace GameEventSystem.Editor
         private void CreateEdge(Edge edge)
         {
             // edge.output and edge.input are reversed from what I would expect
-            GameEventEditorNode inputNode = (GameEventEditorNode)edge.output.node;
-            GameEventEditorNode outputNode = (GameEventEditorNode)edge.input.node;
+            GameEventNodeView inputNodeView = (GameEventNodeView)edge.output.node;
+            GameEventNodeView outputNodeView = (GameEventNodeView)edge.input.node;
 
             GameEventConnection connection =
-                new GameEventConnection(inputNode.Id, outputNode.Id);
+                new GameEventConnection(inputNodeView.Id, outputNodeView.Id);
 
             _gameEvent.AllConnections.Add(connection);
-            inputNode.AddConnection(connection);
-            outputNode.AddConnection(connection);
+            inputNodeView.AddOutput(outputNodeView.Node);
 
             _connectionDictionary.Add(edge, connection);
         }
@@ -201,11 +214,14 @@ namespace GameEventSystem.Editor
 
         private void RemoveBlackboard()
         {
+            if (BlackboardView?.blackboard == null) return;
+            
             Remove(BlackboardView.blackboard);
         }
 
         private void DrawNodes()
         {
+            if (_gameEvent.Nodes == null) return;
             foreach (var node in _gameEvent.Nodes)
             {
                 AddNodeToGraph(node);
@@ -221,10 +237,13 @@ namespace GameEventSystem.Editor
             }
         }
 
-        private void AddNode(GameEventNode node)
+        private void AddNode(Type nodeType, Vector2 mousePosition)
         {
             Undo.RecordObject(_serializedObject.targetObject, "Add Node");
-            _gameEvent.Nodes.Add(node);
+            
+            var node = _gameEvent.AddNode(nodeType);
+            node.SetPosition(new Rect(mousePosition, new Vector2()));
+
             _serializedObject.Update();
 
             AddNodeToGraph(node);
@@ -232,39 +251,27 @@ namespace GameEventSystem.Editor
 
         private void AddNodeToGraph(GameEventNode node)
         {
-            node.TypeName = node.GetType().AssemblyQualifiedName;
-            GameEventEditorNode editorNode = new GameEventEditorNode(node);
-            editorNode.SetPosition(node.Position);
-            editorNode.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>(
+            GameEventNodeView nodeView = new GameEventNodeView(node);
+            //editorNode.SetPosition(node.Position);
+            nodeView.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>(
                 "Assets/Scripts/GameEventSystem/Editor/Graph/USS/Node.uss"));
 
-            // IEnumerable<CustomNodeStyleAttribute> customStyleAttribs = node.GetType().GetCustomAttributes<CustomNodeStyleAttribute>();
-            // if (customStyleAttribs != null)
-            // {
-            //     foreach (var customStyleAttrib in customStyleAttribs)
-            //     {
-            //         try
-            //         {
-            //             StyleSheet styleSheet =
-            //                 AssetDatabase.LoadAssetAtPath<StyleSheet>(
-            //                     $"Assets/Scripts/GameEventSystem/Editor/Graph/USS/{customStyleAttrib.style}.uss");
-            //             if (styleSheet != null)
-            //             {
-            //                 editorNode.styleSheets.Add(styleSheet);
-            //             }
-            //             else throw new Exception();
-            //         }
-            //         catch (Exception ex)
-            //         {
-            //             Debug.LogWarning($"Style sheet does not exit: {customStyleAttrib.style}");
-            //         }
-            //     }
-            // }
+            _graphNodes.Add(nodeView);
+            nodeView.OnNodeSelected += NodeSelected;
+            nodeView.OnNodeUnselected += NodeUnselected;
+            _nodeDictionary.Add(node.Id, nodeView);
 
-            _graphNodes.Add(editorNode);
-            _nodeDictionary.Add(node.Id, editorNode);
+            AddElement(nodeView);
+        }
 
-            AddElement(editorNode);
+        private void NodeSelected(GameEventNodeView obj)
+        {
+            OnNodeSelected?.Invoke(obj);
+        }
+
+        private void NodeUnselected(GameEventNodeView obj)
+        {
+            OnNodeUnselected?.Invoke(obj);
         }
 
         private void RemoveNodes()
@@ -287,23 +294,23 @@ namespace GameEventSystem.Editor
             _connectionDictionary.Clear();
         }
 
-        private void RemoveNode(GameEventEditorNode editorNode)
+        private void DeleteNode(GameEventNodeView nodeView)
         {
-            _gameEvent.Nodes.Remove(editorNode.Node);
-            _graphNodes.Remove(editorNode);
-            _nodeDictionary.Remove(editorNode.Id);
+            _gameEvent.RemoveNode(nodeView.Node);
+            _graphNodes.Remove(nodeView);
+            _nodeDictionary.Remove(nodeView.Id);
             _serializedObject.Update();
         }
 
         private void AddConnection(GameEventConnection connection)
         {
-            GameEventEditorNode inputNode = GetNode(connection.InputNodeId);
-            GameEventEditorNode outputNode = GetNode(connection.OutputNodeId);
+            GameEventNodeView inputNodeView = GetNode(connection.InputNodeId);
+            GameEventNodeView outputNodeView = GetNode(connection.OutputNodeId);
 
-            if (inputNode == null || outputNode == null) return;
+            if (inputNodeView == null || outputNodeView == null) return;
 
-            Port inputPort = inputNode.OutputPort;
-            Port outputPort = outputNode.InputPort;
+            Port inputPort = inputNodeView.OutputPort;
+            Port outputPort = outputNodeView.InputPort;
 
             Edge edge = inputPort.ConnectTo(outputPort);
 
@@ -317,18 +324,22 @@ namespace GameEventSystem.Editor
             if (!_connectionDictionary.ContainsKey(edge)) return;
 
             GameEventConnection connection = _connectionDictionary[edge];
-            GetNode(connection.InputNodeId)?.RemoveConnection(connection);
-            GetNode(connection.OutputNodeId)?.RemoveConnection(connection);
+            GameEventNodeView outputNodeView = GetNode(connection.OutputNodeId);
+            if (outputNodeView != null)
+            {
+                GetNode(connection.InputNodeId)?.RemoveOutput(outputNodeView.Node);
+            }
+
             _gameEvent.AllConnections.Remove(connection);
             _connectionDictionary.Remove(edge);
         }
 
-        private GameEventEditorNode GetNode(string nodeId)
+        private GameEventNodeView GetNode(string nodeId)
         {
-            GameEventEditorNode node = null;
-            _nodeDictionary.TryGetValue(nodeId, out node);
+            GameEventNodeView nodeView = null;
+            _nodeDictionary.TryGetValue(nodeId, out nodeView);
 
-            return node;
+            return nodeView;
         }
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
@@ -344,11 +355,8 @@ namespace GameEventSystem.Editor
                     var windowMousePosition =
                         this.ChangeCoordinatesTo(this, eventAction.eventInfo.mousePosition - _window.position.position);
                     var mousePosition = contentViewContainer.WorldToLocal(windowMousePosition);
-
-
-                    var node = (GameEventNode)Activator.CreateInstance(type);
-                    node.SetPosition(new Rect(mousePosition, new Vector2()));
-                    AddNode(node);
+                    
+                    AddNode(type, mousePosition);
                 });
                 SearchWindow.Open(new SearchWindowContext(eventAction.eventInfo.mousePosition),
                     provider);
@@ -365,9 +373,7 @@ namespace GameEventSystem.Editor
                     var mousePosition = contentViewContainer.WorldToLocal(windowMousePosition);
 
 
-                    var node = (GameEventNode)Activator.CreateInstance(type);
-                    node.SetPosition(new Rect(mousePosition, new Vector2()));
-                    AddNode(node);
+                    AddNode(type, mousePosition);
                 });
                 SearchWindow.Open(new SearchWindowContext(eventAction.eventInfo.mousePosition),
                     provider);
@@ -384,9 +390,7 @@ namespace GameEventSystem.Editor
                     var mousePosition = contentViewContainer.WorldToLocal(windowMousePosition);
 
 
-                    var node = (GameEventNode)Activator.CreateInstance(type);
-                    node.SetPosition(new Rect(mousePosition, new Vector2()));
-                    AddNode(node);
+                    AddNode(type, mousePosition);
                 });
                 SearchWindow.Open(new SearchWindowContext(eventAction.eventInfo.mousePosition),
                     provider);

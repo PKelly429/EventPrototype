@@ -42,8 +42,8 @@ namespace GameEventSystem.Editor
             foreach (var variableDefinition in blackboard.definedVariables)
             {
                 EditorGUILayout.BeginHorizontal("box");
-                variableDefinition.name =
-                    EditorGUILayout.TextField($"{variableDefinition.type}", variableDefinition.name);
+                variableDefinition.Name =
+                    EditorGUILayout.TextField($"{variableDefinition.type}", variableDefinition.Name);
                 if (GUILayout.Button(delTexture, EditorStyles.iconButton))
                 {
                     removedVariables.Add(variableDefinition);
@@ -64,7 +64,7 @@ namespace GameEventSystem.Editor
             {
                 var provider = new VariableDefinitionSearchProvider((type) =>
                 {
-                    blackboard.AddVariable((VariableDefinition)Activator.CreateInstance(type));
+                    blackboard.AddVariable(type);
                 });
                 SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)),
                     provider);

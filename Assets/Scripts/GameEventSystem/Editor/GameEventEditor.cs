@@ -56,6 +56,8 @@ namespace GameEventSystem.Editor
                 GameEventEditorWindow.Open((GameEvent)target);
             }
 
+            DrawDefaultInspector();
+            
             return;
             
         }

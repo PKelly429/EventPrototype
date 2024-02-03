@@ -1,82 +1,85 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
 
 namespace GameEventSystem
 {
-    [System.Serializable]
-    public class GameEventNode
+    public abstract class GameEventNode : ScriptableObject
     {
-        public List<GameEventConnection> Inputs;
-        public List<GameEventConnection> Outputs;
+        public enum State 
+        {
+            Idle,
+            Running,
+            Failure,
+            Success
+        }
         
-        [SerializeField] private string _guid;
-        [SerializeField] private Rect _position;
+        [HideInInspector] public State state = State.Idle;
+        [SerializeField] [HideInInspector] private string guid;
+        
+        [HideInInspector] public List<GameEventNode> Outputs = new List<GameEventNode>();
+        [HideInInspector] [SerializeField] private Rect _position;
 
-        public string TypeName;
-
-        public string Id => _guid;
+        public string Id => guid;
         public Rect Position => _position;
 
-        public GameEventNode()
+        public virtual void Setup()
         {
-            GenerateGUID();
-            Inputs = new List<GameEventConnection>();
-            Outputs = new List<GameEventConnection>();
-        }
-        
-        public virtual bool Execute()
-        {
-            return true;
+            
         }
 
+        public virtual State Execute()
+        {
+            if (state == State.Idle) 
+            {
+                OnStart();
+            }
+
+            state = OnUpdate();
+            
+            if (state != State.Running) 
+            {
+                OnStop();
+            }
+            
+            return state;
+        }
+
+        protected virtual void OnStart() { }
+
+        protected virtual void OnStop() { }
+        
+        protected abstract State OnUpdate();
+
+        #region Graph
+        public virtual GameEventNode Clone() 
+        {
+            return Instantiate(this);
+        }
         public void SetPosition(Rect position)
         {
             _position = position;
+            EditorUtility.SetDirty(this);
         }
         
-        public void AddConnection(GameEventConnection connection)
+        public void AddOutput(GameEventNode node)
         {
-            if (connection.InputNodeId.Equals(Id))
-            {
-                Outputs.Add(connection);
-            }
-            else if (connection.OutputNodeId.Equals(Id))
-            {
-                Inputs.Add(connection);
-            }
+            Outputs.Add(node);
+            EditorUtility.SetDirty(this);
         }
 
-        public void RemoveConnection(GameEventConnection connection)
+        public void RemoveOutput(GameEventNode node)
         {
-            if (connection.InputNodeId.Equals(Id))
-            {
-                for(int i=Outputs.Count-1; i>=0 ;i--)
-                {
-                    if (Outputs[i].Id.Equals(connection.Id))
-                    {
-                        Outputs.RemoveAt(i);
-                        return;
-                    }
-                }
-            }
-            else if (connection.OutputNodeId.Equals(Id))
-            {
-                for(int i=Inputs.Count-1; i>=0 ;i--)
-                {
-                    if (Inputs[i].Id.Equals(connection.Id))
-                    {
-                        Inputs.RemoveAt(i);
-                        return;
-                    }
-                }
-            }
+            Outputs.Remove(node);
+            EditorUtility.SetDirty(this);
         }
 
-        private void GenerateGUID()
+        public void GenerateGUID()
         {
-            _guid = System.Guid.NewGuid().ToString();
+            guid = GUID.Generate().ToString();
         }
+        #endregion
     }
 }

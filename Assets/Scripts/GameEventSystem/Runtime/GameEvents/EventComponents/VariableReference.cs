@@ -48,8 +48,8 @@ namespace GameEventSystem
             if (_variableDefinition != null)
             {
                 name = string.IsNullOrEmpty(propertyName)
-                    ? _variableDefinition.name
-                    : $"{_variableDefinition.name}.{propertyName}";
+                    ? _variableDefinition.Name
+                    : $"{_variableDefinition.Name}.{propertyName}";
             }
             else
             {

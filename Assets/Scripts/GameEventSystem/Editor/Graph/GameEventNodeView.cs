@@ -8,10 +8,12 @@ using UnityEngine.UIElements;
 
 namespace GameEventSystem.Editor
 {
-    public class GameEventEditorNode : Node
+    public class GameEventNodeView : Node
     {
+        public Action<GameEventNodeView> OnNodeSelected;
+        public Action<GameEventNodeView> OnNodeUnselected;
+        
         private GameEventNode _node;
-
         public GameEventNode Node => _node;
 
         public string Id => Node.Id;
@@ -23,9 +25,13 @@ namespace GameEventSystem.Editor
         private Port _inputPort;
         private Port _outputPort;
         
-        public GameEventEditorNode(GameEventNode node) : base("Assets/Scripts/GameEventSystem/Editor/Graph/USS/NodeView.uxml")
+        public GameEventNodeView(GameEventNode node) : base("Assets/Scripts/GameEventSystem/Editor/Graph/USS/NodeView.uxml")
         {
             _node = node;
+
+            viewDataKey = _node.Id;
+            style.left = node.Position.x;
+            style.top = node.Position.y;
             
             SetupClassLists();
 
@@ -51,6 +57,20 @@ namespace GameEventSystem.Editor
             {
                 CreateFlowOutputPort();
             }
+        }
+
+        public override void OnSelected()
+        {
+            base.OnSelected();
+            
+            OnNodeSelected?.Invoke(this);
+        }
+
+        public override void OnUnselected()
+        {
+            base.OnUnselected();
+            
+            OnNodeUnselected?.Invoke(this);
         }
 
         private void SetupClassLists()
@@ -93,19 +113,56 @@ namespace GameEventSystem.Editor
             outputContainer.Add(_outputPort);
         }
 
-        public void AddConnection(GameEventConnection connection)
+        public void AddOutput(GameEventNode node)
         {
-            _node.AddConnection(connection);
+            _node.AddOutput(node);
         }
         
-        public void RemoveConnection(GameEventConnection connection)
+        public void RemoveOutput(GameEventNode node)
         {
-            _node.RemoveConnection(connection);
+            _node.RemoveOutput(node);
         }
 
         public void SavePosition()
         {
             _node.SetPosition(this.GetPosition());
+        }
+        
+        public void SortChildren() 
+        {
+            _node.Outputs.Sort(SortByHorizontalPosition);
+        }
+        
+        private int SortByHorizontalPosition(GameEventNode left, GameEventNode right) 
+        {
+            return left.Position.x < right.Position.x ? -1 : 1;
+        }
+        
+        public void UpdateState() 
+        {
+            RemoveFromClassList("idle");
+            RemoveFromClassList("running");
+            RemoveFromClassList("failure");
+            RemoveFromClassList("success");
+
+            if (Application.isPlaying) 
+            {
+                switch (_node.state) 
+                {
+                    case GameEventNode.State.Idle:
+                        AddToClassList("idle");
+                        break;
+                    case GameEventNode.State.Running:
+                        AddToClassList("running");
+                        break;
+                    case GameEventNode.State.Failure:
+                        AddToClassList("failure");
+                        break;
+                    case GameEventNode.State.Success:
+                        AddToClassList("success");
+                        break;
+                }
+            }
         }
     }
 }

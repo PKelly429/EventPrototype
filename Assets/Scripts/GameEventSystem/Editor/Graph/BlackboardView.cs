@@ -95,44 +95,39 @@ namespace GameEventSystem.Editor
         
             gameEvent.RemoveVariable(field.property);
             blackboard.Remove(field);
-        
-            AssetDatabase.RemoveObjectFromAsset(field.property);
-            Undo.DestroyObjectImmediate(field.property);
-        
+
             EditorUtility.SetDirty(gameEvent);
         }
 
         public void EditTextRequested(Blackboard blackboard, VisualElement visualElement, string newText)
         {
-            //var field = (BlackboardField)visualElement;
-            //var property = (AbstractBlackboardProperty)field.userData;
+            var field = (BlackboardField)visualElement;
+            var property = (VariableDefinition)field.userData;
 
-            // if (!string.IsNullOrEmpty(newText) && newText != property.Name)
-            // {
-            //     Undo.RecordObject(visualGraph, "Edit Blackboard Text");
-            //
-            //     int count = 0;
-            //     string propertyName = newText;
-            //     foreach (var boardProperty in visualGraph.BlackboardProperties)
-            //     {
-            //         if (boardProperty.Name == propertyName) count++;
-            //     }
-            //     if (count > 0) propertyName += $"({count})";
-            //
-            //     property.Name = propertyName;
-            //     field.text = property.Name;
-            //
-            //     EditorUtility.SetDirty(visualGraph);
-            // }
+             if (!string.IsNullOrEmpty(newText) && newText != property.Name)
+             {
+                 Undo.RecordObject(gameEvent, "Edit Blackboard Text");
+            
+                 int count = 0;
+                 string propertyName = newText;
+                 foreach (var boardProperty in gameEvent.definedVariables)
+                 {
+                     if (boardProperty.Name == propertyName) count++;
+                 }
+                 if (count > 0) propertyName += $"({count})";
+            
+                 property.Name = propertyName;
+                 field.text = property.Name;
+                 
+                 EditorUtility.SetDirty(gameEvent);
+             }
         }
 
         void AddItemRequested(Blackboard blackboard)
         {
             var provider = new VariableDefinitionSearchProvider((type) =>
             {
-                var newProperty = (VariableDefinition)ScriptableObject.CreateInstance(type);
-                newProperty.name = $"new{newProperty.type.Name}";
-                gameEvent.AddVariable(newProperty);
+                var newProperty = gameEvent.AddVariable(type);
                 AddBlackboardProperty(newProperty);
             });
             SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)),

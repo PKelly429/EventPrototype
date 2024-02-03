@@ -4,14 +4,34 @@ using UnityEngine;
 
 namespace GameEventSystem
 {
-    public class TriggerNode : GameEventNode
+    public abstract class TriggerNode : GameEventNode
     {
+        [SerializeField] private bool _repeat;
+        public override void Setup()
+        {
+            AddListener();
+            state = State.Running;
+        }
 
-    }
-    
-    [NodeInfo("On Start", "", 0, false, true)]
-    public class OnStartTrigger : TriggerNode
-    {
+        protected override State OnUpdate()
+        {
+            return state;
+        }
 
+        protected abstract void AddListener();
+        protected abstract void RemoveListener();
+
+        protected void Trigger()
+        {
+            if (!_repeat)
+            {
+                state = State.Success;
+                RemoveListener();
+            }
+            foreach (var node in Outputs)
+            {
+                node.Execute();
+            }
+        }
     }
 }

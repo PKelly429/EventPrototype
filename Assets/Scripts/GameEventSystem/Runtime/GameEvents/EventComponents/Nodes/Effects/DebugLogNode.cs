@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameEventSystem
-{ 
-    public abstract class ConditionNode : GameEventNode
+{
+    [NodeInfo("Log")]
+    public class DebugLogNode : EffectNode
     {
-        protected abstract bool CheckCondition();
+        public string LogText;
+
         protected override State OnUpdate()
         {
-            return state;
+            Debug.Log(LogText);
+            return State.Success;
         }
     }
 }
