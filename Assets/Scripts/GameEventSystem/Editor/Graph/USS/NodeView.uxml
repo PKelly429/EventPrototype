@@ -1,7 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/Scripts/GameEventSystem/Editor/Graph/USS/Node.uss?fileID=7433441132597879392&amp;guid=20cc5c539fef94b4599920ed34b616d7&amp;type=3#Node" />
     <ui:VisualElement name="node-border">
-        <ui:VisualElement name="contents">
+        <ui:VisualElement name="contents" style="flex-direction: column;">
             <ui:VisualElement name="top">
                 <ui:VisualElement name="input" style="justify-content: flex-end; max-height: none; max-width: none;" />
                 <ui:VisualElement name="divider" class="horizontal" />
@@ -13,7 +13,11 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:Label text="Node Description" display-tooltip-when-elided="true" name="description-label" style="font-size: 10px; color: rgb(220, 221, 225);" />
+                <ui:Label text="Node Description" display-tooltip-when-elided="true" name="description-label" style="font-size: 10px; color: rgb(220, 221, 225); margin-left: 2px; margin-right: 2px; margin-top: 2px; margin-bottom: 6px;" />
+                <ui:VisualElement name="divider" class="vertical" />
+            </ui:VisualElement>
+            <ui:VisualElement name="node-content" style="flex-wrap: wrap; flex-grow: 1; align-items: stretch; justify-content: center; flex-shrink: 0;" />
+            <ui:VisualElement name="bottom">
                 <ui:VisualElement name="divider" class="vertical" />
                 <ui:VisualElement name="output" style="justify-content: flex-start;" />
             </ui:VisualElement>

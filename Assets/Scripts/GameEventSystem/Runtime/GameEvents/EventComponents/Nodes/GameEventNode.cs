@@ -1,8 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.UIElements;
+#endif
 
 namespace GameEventSystem
 {
@@ -54,6 +59,26 @@ namespace GameEventSystem
         protected abstract State OnUpdate();
 
         #region Graph
+        public virtual void DrawContent(VisualElement contentContainer)
+        {
+#if UNITY_EDITOR
+            var fieldsToDisplay = GetType().GetFields()
+                .Where(fieldInfo => fieldInfo.IsDefined(typeof(DisplayFieldAttribute), false));
+
+            foreach (var fieldInfo in fieldsToDisplay)
+            {
+                VisualElement fieldContainer = new VisualElement();
+                fieldContainer.style.marginTop = 5;
+                
+                PropertyField propertyField = new PropertyField(); 
+                propertyField.bindingPath = fieldInfo.Name;
+                propertyField.BindProperty(new SerializedObject(this));
+                fieldContainer.Add(propertyField);
+                contentContainer.Add(fieldContainer);
+            }
+#endif
+        }
+
         public virtual GameEventNode Clone() 
         {
             return Instantiate(this);

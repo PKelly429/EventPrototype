@@ -43,6 +43,7 @@ namespace GameEventSystem.Editor
             title = info.NodeTitle;
             Label descriptionLabel = this.Q<Label>("description-label");
             descriptionLabel.text = description == null ? string.Empty : description.NodeDescription;
+            if (description == null) descriptionLabel.visible = false;
 
             string[] menuName = info.GetSplittedMenuName();
             foreach (var menu in menuName)
@@ -60,6 +61,8 @@ namespace GameEventSystem.Editor
             {
                 CreateFlowOutputPort();
             }
+            
+            node.DrawContent(this.Q<VisualElement>("node-content"));
         }
 
         public override void OnSelected()

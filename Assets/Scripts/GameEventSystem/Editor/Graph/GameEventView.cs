@@ -344,8 +344,16 @@ namespace GameEventSystem.Editor
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
-            // base.BuildContextualMenu(evt);
-            // return;
+            if (evt.target.GetType() == typeof(Edge))
+            {
+                base.BuildContextualMenu(evt);
+                return;
+            }
+            
+            if (evt.target.GetType() != typeof(GameEventView))
+            {
+                return;
+            }
 
             #region Add Trigger Search Menu
             evt.menu.AppendAction("Add Trigger Node", eventAction =>
