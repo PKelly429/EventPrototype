@@ -38,8 +38,11 @@ namespace GameEventSystem.Editor
             Type typeInfo = node.GetType();
 
             NodeInfoAttribute info = typeInfo.GetCustomAttribute<NodeInfoAttribute>() ?? new NodeInfoAttribute(typeInfo.Name);
+            NodeDescriptionAttribute description = typeInfo.GetCustomAttribute<NodeDescriptionAttribute>();
 
             title = info.NodeTitle;
+            Label descriptionLabel = this.Q<Label>("description-label");
+            descriptionLabel.text = description == null ? string.Empty : description.NodeDescription;
 
             string[] menuName = info.GetSplittedMenuName();
             foreach (var menu in menuName)
@@ -95,7 +98,7 @@ namespace GameEventSystem.Editor
 
         private void CreateFlowInputPort()
         {
-            _inputPort = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Multi, typeof(PortTypes.FlowPort));
+            _inputPort = new NodePort(Direction.Input, Port.Capacity.Multi);
             _inputPort.portName = string.Empty;
             _inputPort.style.flexDirection = FlexDirection.Column;
             _inputPort.tooltip = "Flow input";
@@ -105,7 +108,7 @@ namespace GameEventSystem.Editor
         
         private void CreateFlowOutputPort()
         {
-            _outputPort = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, typeof(PortTypes.FlowPort));
+            _outputPort = new NodePort(Direction.Output, Port.Capacity.Multi);
             _outputPort.portName = string.Empty;
             _outputPort.style.flexDirection = FlexDirection.ColumnReverse;
             _outputPort.tooltip = "Flow output";

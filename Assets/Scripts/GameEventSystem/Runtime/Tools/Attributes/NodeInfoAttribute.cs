@@ -13,7 +13,7 @@ namespace GameEventSystem
         public bool HasFlowOutput { get; private set; }
         public int Order { get; private set; }
 
-        public NodeInfoAttribute(string nodeTitle, string nodeMenu = "", int order = 0, bool hasFlowInput = true, bool hasFlowOutput = true)
+        public NodeInfoAttribute(string nodeTitle, string nodeMenu = "",  int order = 0, bool hasFlowInput = true, bool hasFlowOutput = true)
         {
             NodeTitle = nodeTitle;
             NodeMenu = nodeMenu;
@@ -39,18 +39,14 @@ namespace GameEventSystem
         }
     }
     
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class CustomNodeStyleAttribute : Attribute
+    public class NodeDescriptionAttribute : Attribute
     {
-        public string style;
+        public string NodeDescription { get; private set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="_name"></param>
-        public CustomNodeStyleAttribute(string style)
+        public NodeDescriptionAttribute(string nodeDescription)
         {
-            this.style = style;
+            NodeDescription = nodeDescription;
+
         }
     }
 }

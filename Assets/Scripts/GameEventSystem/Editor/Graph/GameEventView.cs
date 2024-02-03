@@ -78,7 +78,7 @@ namespace GameEventSystem.Editor
         {
             ClearView();
             
-            //DrawBlackboard();
+            DrawBlackboard();
             DrawNodes();
             DrawConnections();
             
@@ -88,7 +88,7 @@ namespace GameEventSystem.Editor
         public void ClearView()
         {
             graphViewChanged -= OnGraphViewChanged; 
-            //RemoveBlackboard();
+            RemoveBlackboard();
             RemoveNodes();
             RemoveConnections();
         }

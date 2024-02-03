@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace GameEventSystem
 {
-    [NodeInfo("Log")]
+    [NodeInfo("Log", "")]
+    [NodeDescription("Logs a message to the console")]
     public class DebugLogNode : EffectNode
     {
         public string LogText;
