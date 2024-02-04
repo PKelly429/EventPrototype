@@ -1,13 +1,38 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/Scripts/GameEventSystem/Editor/Graph/USS/GameEventEditor.uss?fileID=7433441132597879392&amp;guid=a65ae26b201710c4db5ac4e59c0fa607&amp;type=3#GameEventEditor" />
     <uie:Toolbar>
         <uie:ToolbarMenu display-tooltip-when-elided="true" name="AssetMenu" text="Assets" />
     </uie:Toolbar>
     <GameEventSystem.Editor.SplitView fixed-pane-initial-dimension="250">
         <ui:VisualElement name="left-panel">
-            <ui:VisualElement name="inspector-header" style="background-color: rgb(40, 40, 40);">
-                <ui:Label text="Inspector" display-tooltip-when-elided="true" name="inspector-header-label" style="color: rgb(220, 221, 225); font-size: 14px;" />
-            </ui:VisualElement>
-            <GameEventSystem.Editor.InspectorView name="inspector-panel" style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px;" />
+            <GameEventSystem.Editor.SplitView orientation="Vertical" fixed-pane-initial-dimension="450">
+                <ui:VisualElement name="blackboard-container">
+                    <ui:VisualElement name="blackboard-header" style="background-color: rgb(40, 40, 40); font-size: 16px; -unity-font-style: normal; flex-shrink: 0;">
+                        <ui:Label text="Blackboard" display-tooltip-when-elided="true" name="blackboard-header-label" style="color: rgb(220, 221, 225); font-size: 14px;" />
+                    </ui:VisualElement>
+                    <GameEventSystem.Editor.BlackboardView name="blackboard-panel" style="flex-shrink: 1;">
+                        <ui:VisualElement name="blackboard-top" style="flex-shrink: 0;">
+                            <uie:ObjectField label="Blackboard" allow-scene-objects="false" name="blackboard-field" />
+                            <ui:Button text="Use Local Blackboard" display-tooltip-when-elided="true" name="use-local-blackboard" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="divider" style="color: rgb(47, 54, 64); height: 4px; background-color: rgb(40, 40, 40); flex-shrink: 0;" />
+                        <ui:VisualElement name="content">
+                            <ui:VisualElement name="header" style="flex-direction: row; flex-shrink: 0;">
+                                <ui:Label text="Local Blackboard" display-tooltip-when-elided="true" name="blackboard-name" style="flex-grow: 1; font-size: 16px; -unity-font-style: bold; justify-content: flex-start; -unity-text-align: middle-left;" />
+                                <ui:Button text="+" display-tooltip-when-elided="true" name="addButton" />
+                            </ui:VisualElement>
+                            <ui:VisualElement name="divider" style="color: rgb(47, 54, 64); height: 4px; flex-shrink: 0;" />
+                            <ui:ScrollView name="blackboard-params" style="background-color: rgb(50, 50, 50); margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 2px; padding-bottom: 2px; flex-wrap: nowrap;" />
+                        </ui:VisualElement>
+                    </GameEventSystem.Editor.BlackboardView>
+                </ui:VisualElement>
+                <ui:VisualElement name="inspector-container">
+                    <ui:VisualElement name="inspector-header" style="background-color: rgb(40, 40, 40); font-size: 16px; -unity-font-style: normal;">
+                        <ui:Label text="Inspector" display-tooltip-when-elided="true" name="inspector-header-label" style="color: rgb(220, 221, 225); font-size: 14px;" />
+                    </ui:VisualElement>
+                    <GameEventSystem.Editor.InspectorView name="inspector-panel" style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px;" />
+                </ui:VisualElement>
+            </GameEventSystem.Editor.SplitView>
         </ui:VisualElement>
         <ui:VisualElement name="right-panel">
             <GameEventSystem.Editor.GameEventView focusable="true" />

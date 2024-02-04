@@ -7,9 +7,10 @@ using UnityEngine;
 namespace GameEventSystem
 {
     [Serializable]
-    public abstract class VariableDefinition : ScriptableObject
+    public abstract class VariableDefinition
     {
         public string uniqueId;
+        [SerializeField] private string _name;
         public abstract Type type { get; }
         public abstract object value { get; set; }
 
@@ -30,11 +31,11 @@ namespace GameEventSystem
 
         public string Name
         {
-            get => name;
+            get => _name;
             set
             {
-                if (name == value) return;
-                name = value;
+                if (_name == value) return;
+                _name = value;
                 if (onNameChanged != null)
                 {
                     onNameChanged(value);
@@ -61,7 +62,7 @@ namespace GameEventSystem
     [AddTypeMenu("skip", 999)]
     public abstract class Variable<T> : VariableDefinition
     {
-        private T _value;
+        [SerializeField] private T _value;
         public override Type type => typeof(T);
 
         public override object value
@@ -72,46 +73,55 @@ namespace GameEventSystem
     }
 
     [AddTypeMenu("BuiltIn/Int")]
+    [Serializable]
     public class IntVariable : Variable<int>
     {
     }
 
     [AddTypeMenu("BuiltIn/Float")]
+    [Serializable]
     public class FloatVariable : Variable<float>
     {
     }
 
     [AddTypeMenu("BuiltIn/Bool")]
+    [Serializable]
     public class BoolVariable : Variable<bool>
     {
     }
 
     [AddTypeMenu("BuiltIn/String")]
+    [Serializable]
     public class StringVariable : Variable<string>
     {
     }
 
     [AddTypeMenu("BuiltIn/Colour")]
+    [Serializable]
     public class ColourVariable : Variable<Color>
     {
     }
 
     [AddTypeMenu("BuiltIn/Vector2")]
+    [Serializable]
     public class Vector2Variable : Variable<Vector2>
     {
     }
 
     [AddTypeMenu("BuiltIn/Vector3")]
+    [Serializable]
     public class Vector3Variable : Variable<Vector3>
     {
     }
 
     [AddTypeMenu("BuiltIn/Rotation")]
+    [Serializable]
     public class RotationVariable : Variable<Quaternion>
     {
     }
     
     [AddTypeMenu("BuiltIn/Object")]
+    [Serializable]
     public class ObjectVariable : Variable<UnityEngine.Object>
     {
     }

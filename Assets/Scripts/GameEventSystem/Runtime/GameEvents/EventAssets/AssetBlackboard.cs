@@ -24,14 +24,15 @@ namespace GameEventSystem
 
         public VariableDefinition AddVariable(Type type)
         {
-            VariableDefinition variable = ScriptableObject.CreateInstance(type) as VariableDefinition;
+            //VariableDefinition variable = ScriptableObject.CreateInstance(type) as VariableDefinition;
+            VariableDefinition variable = Activator.CreateInstance(type) as VariableDefinition;
             variable.Name = $"new{variable.type.Name}";
             
             variable.GenerateId();
             definedVariables.Add(variable);
             
-            AssetDatabase.AddObjectToAsset(variable, this);
-            AssetDatabase.SaveAssets();
+            // AssetDatabase.AddObjectToAsset(variable, this);
+            // AssetDatabase.SaveAssets();
 
             return variable;
         }

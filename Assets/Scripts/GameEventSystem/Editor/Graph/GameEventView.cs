@@ -21,8 +21,8 @@ namespace GameEventSystem.Editor
 
         public override bool supportsWindowedBlackboard => true;
         public MiniMap Minimap { get; private set; }
-        public BlackboardView BlackboardView { get; private set; }
-        public Blackboard Blackboard { get { return BlackboardView.blackboard; } private set { } }
+        public GraphBlackboardView GraphBlackboardView { get; private set; }
+        public Blackboard Blackboard { get { return GraphBlackboardView.blackboard; } private set { } }
         
         private GameEvent _gameEvent;
         private SerializedObject _serializedObject;
@@ -78,17 +78,15 @@ namespace GameEventSystem.Editor
         {
             ClearView();
             
-            DrawBlackboard();
             DrawNodes();
             DrawConnections();
-            
+
             graphViewChanged += OnGraphViewChanged;
         }
 
         public void ClearView()
         {
-            graphViewChanged -= OnGraphViewChanged; 
-            RemoveBlackboard();
+            graphViewChanged -= OnGraphViewChanged;
             RemoveNodes();
             RemoveConnections();
         }
@@ -203,21 +201,21 @@ namespace GameEventSystem.Editor
             _connectionDictionary.Add(edge, connection);
         }
 
-        private void DrawBlackboard()
-        {
-            BlackboardView = new BlackboardView();
-            BlackboardView.gameEventView = this;
-            BlackboardView.SetVisualGraph(_gameEvent);
-            Blackboard.SetPosition(new Rect(10, 30, 250, 300));
-            Add(BlackboardView.blackboard);
-        }
+        // private void DrawBlackboard()
+        // {
+        //     GraphBlackboardView = new GraphBlackboardView();
+        //     GraphBlackboardView.gameEventView = this;
+        //     GraphBlackboardView.SetVisualGraph(_gameEvent);
+        //     Blackboard.SetPosition(new Rect(10, 30, 250, 300));
+        //     Add(GraphBlackboardView.blackboard);
+        // }
 
-        private void RemoveBlackboard()
-        {
-            if (BlackboardView?.blackboard == null) return;
-            
-            Remove(BlackboardView.blackboard);
-        }
+        // private void RemoveBlackboard()
+        // {
+        //     if (GraphBlackboardView?.blackboard == null) return;
+        //     
+        //     Remove(GraphBlackboardView.blackboard);
+        // }
 
         private void DrawNodes()
         {

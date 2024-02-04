@@ -29,6 +29,9 @@ namespace GameEventSystem.Editor
 
         public override void OnInspectorGUI()
         {
+            DrawDefaultInspector();
+            return;
+            
             AssetBlackboard blackboard = (AssetBlackboard)target;
             serializedObject.Update();
             GUILayout.Label($"Variables", SubHeadingStyle);

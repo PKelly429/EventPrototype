@@ -15,6 +15,7 @@ namespace GameEventSystem.Editor
         [SerializeField] private GameEvent _currentEvent;
         [SerializeField] private SerializedObject _serializedObject;
         [SerializeField] private GameEventView _currentView;
+        [SerializeField] private BlackboardView _blackboardView;
         [SerializeField] private InspectorView _inspectorView;
         [SerializeField] private ToolbarMenu _toolbarMenu;
         
@@ -55,7 +56,11 @@ namespace GameEventSystem.Editor
             rootVisualElement.styleSheets.Add(styleSheet);
 
             _currentView = rootVisualElement.Q<GameEventView>();
+            _blackboardView = rootVisualElement.Q<BlackboardView>();
             _inspectorView = rootVisualElement.Q<InspectorView>();
+            
+            //Blackboard
+            _blackboardView.SetupBlackboard();
             
             // Toolbar assets menu
             _toolbarMenu = rootVisualElement.Q<ToolbarMenu>();
@@ -171,6 +176,7 @@ namespace GameEventSystem.Editor
         {
             _currentEvent = target;
             _inspectorView.UpdateSelection(null);
+            _blackboardView.SetGameEvent(target);
             DrawGraph();
             _overlay.style.visibility = Visibility.Hidden;
         }

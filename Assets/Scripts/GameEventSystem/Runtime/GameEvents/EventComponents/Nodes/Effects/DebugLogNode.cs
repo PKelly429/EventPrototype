@@ -13,27 +13,12 @@ namespace GameEventSystem
     [NodeDescription("Logs a message to the console")]
     public class DebugLogNode : EffectNode
     {
-        [TextArea] [DisplayField] public string LogText;
-        [DisplayField] public bool Test1;
-        public bool Test2;
+        [TextArea] public string logText;
 
         protected override State OnUpdate()
         {
-            Debug.Log(LogText);
+            Debug.Log(logText);
             return State.Success;
         }
-        
-        
-//         public override void DrawContent(VisualElement contentContainer)
-//         {
-// #if UNITY_EDITOR
-//             PropertyField propertyField = new PropertyField();
-//             propertyField.bindingPath = "LogText";
-//             propertyField.BindProperty(new SerializedObject(this));
-//             propertyField.label = string.Empty;
-//             //propertyField.style.whiteSpace = WhiteSpace.Normal;
-//             contentContainer.Add(propertyField);
-// #endif
-//         }
     }
 }

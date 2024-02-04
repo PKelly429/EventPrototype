@@ -8,15 +8,14 @@ namespace GameEventSystem
 {
     [CreateAssetMenu(fileName = "NewEvent", menuName = "GameEvents/Game Event", order = 1)]
     [Serializable]
-    public class GameEvent : ScriptableObject, IBlackboard
+    public class GameEvent : ScriptableObject
     {
         public List<GameEventNode> Nodes = new List<GameEventNode>();
         public List<GameEventConnection> AllConnections = new List<GameEventConnection>();
 
-        //[SerializeReference] public List<AssetBlackboard> blackboards;
-        [SerializeReference] public List<Trigger> triggers;
-        [SerializeReference] public List<Condition> conditions;
-        [SerializeReference] public List<Effect> effects;
+        public AssetBlackboard Blackboard;
+        public AssetBlackboard LocalBlackboard;
+
 
         [ScriptableObjectIdAttribute] [SerializeField]
         private string _uniqueID;
@@ -49,6 +48,24 @@ namespace GameEventSystem
             Undo.DestroyObjectImmediate(node);
             AssetDatabase.SaveAssets();
         }
+
+        public AssetBlackboard CreateLocalBlackboard()
+        {
+            if (LocalBlackboard == null)
+            {
+                LocalBlackboard = ScriptableObject.CreateInstance(typeof(AssetBlackboard)) as AssetBlackboard;
+                LocalBlackboard.name = "LocalBlackboard";
+                if (!Application.isPlaying)
+                {
+                    AssetDatabase.AddObjectToAsset(LocalBlackboard, this);
+                }
+                AssetDatabase.SaveAssets();
+            }
+
+            Blackboard = LocalBlackboard;
+            
+            return Blackboard;
+        }
 #endif
     #endregion
 
@@ -70,26 +87,29 @@ namespace GameEventSystem
 
         public VariableDefinition AddVariable(Type type)
         {
-            VariableDefinition variable = ScriptableObject.CreateInstance(type) as VariableDefinition;
-            variable.Name = $"new{variable.type.Name}";
-            
-            variable.GenerateId();
-            definedVariables.Add(variable);
-            
-            AssetDatabase.AddObjectToAsset(variable, this);
-            AssetDatabase.SaveAssets();
-
-            return variable;
+            return Blackboard.AddVariable(type);
+            // VariableDefinition variable = ScriptableObject.CreateInstance(type) as VariableDefinition;
+            // variable.Name = $"new{variable.type.Name}";
+            //
+            // variable.GenerateId();
+            // definedVariables.Add(variable);
+            //
+            // AssetDatabase.AddObjectToAsset(variable, this);
+            // AssetDatabase.SaveAssets();
+            //
+            // return variable;
         }
 
         public void RemoveVariable(VariableDefinition variable)
         {
-            variable.Delete();
-            definedVariables.Remove(variable);
+            Blackboard.RemoveVariable(variable);
             
-            AssetDatabase.RemoveObjectFromAsset(variable);
-            Undo.DestroyObjectImmediate(variable);
-            AssetDatabase.SaveAssets();
+            // variable.Delete();
+            // definedVariables.Remove(variable);
+            //
+            // AssetDatabase.RemoveObjectFromAsset(variable);
+            // Undo.DestroyObjectImmediate(variable);
+            // AssetDatabase.SaveAssets();
         }
 
         public void RemoveVariableById(string id)

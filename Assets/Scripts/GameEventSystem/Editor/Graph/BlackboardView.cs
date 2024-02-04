@@ -1,35 +1,45 @@
-///-------------------------------------------------------------------------------------------------
-// author: William Barry
-// date: 2020
-// Copyright (c) Bus Stop Studios.
-///-------------------------------------------------------------------------------------------------
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace GameEventSystem.Editor
 {
-    public class BlackboardView
+    public class BlackboardView : VisualElement
     {
-        public GameEventView gameEventView;
-        private GameEvent gameEvent;
-        public Blackboard blackboard { get; private set; }
+        public new class UxmlFactory : UxmlFactory<BlackboardView, VisualElement.UxmlTraits> { }
+        
+        private ObjectField _blackboardField;
+        private Button _useLocalBlackboard;
+        private Button _addButton;
 
-        private Dictionary<System.Type, System.Type> blackboardFieldTypes = new Dictionary<Type, Type>();
+        private GameEvent _currentGameEvent;
+        private AssetBlackboard _blackboard;
+        private VisualElement _blackboardContent;
+        
+        private Dictionary<Type, Type> blackboardFieldTypes = new Dictionary<Type, Type>();
 
         public BlackboardView()
         {
-            blackboard = new Blackboard();
-            blackboard.scrollable = true;
-            blackboard.windowed = false;
-            blackboard.Add(new BlackboardSection { title = "Graph Properties" });
-            blackboard.addItemRequested = AddItemRequested;
-            blackboard.editTextRequested = EditTextRequested;
+        }
+
+        public void SetupBlackboard()
+        {
+            _blackboardField = contentContainer.Q<ObjectField>("blackboard-field");
+            _blackboardField.objectType = typeof(AssetBlackboard);
             
+            _useLocalBlackboard = contentContainer.Q<Button>("use-local-blackboard");
+            _addButton = contentContainer.Q<Button>("addButton");
+            _useLocalBlackboard.clicked += UseLocalBlackboardOnclicked;
+            _addButton.clicked += AddButtonOnclicked;
+
+            _blackboardContent = contentContainer.Q<ScrollView>("blackboard-params");
+
             InitBlackboardFields();
         }
 
@@ -56,24 +66,40 @@ namespace GameEventSystem.Editor
                 }
             }
         }
-        
-        public void ClearBlackboard()
+
+        public void SetGameEvent(GameEvent gameEvent)
         {
-            blackboard.Clear();
+            _currentGameEvent = gameEvent;
+            if (_currentGameEvent == null || _currentGameEvent.Blackboard == null)
+            {
+                _blackboardField.Unbind();
+                return;
+            }
+            _blackboardField.bindingPath ="Blackboard";
+            _blackboardField.Bind(new SerializedObject(_currentGameEvent));
         }
 
-        public void SetVisualGraph(GameEvent gameEvent)
+        public override void HandleEvent(EventBase evt)
         {
-            blackboard.Clear();
-            blackboard.title = gameEvent.name;
-            this.gameEvent = gameEvent;
-            if (blackboardFieldTypes == null)
+            base.HandleEvent(evt);
+
+            if (_currentGameEvent == null) return;
+            if (evt.target == _blackboardField)
             {
-                InitBlackboardFields();
+                // event for when the blackboard is changed
+                if (evt.eventTypeId != 37) return;
+                SetBlackboard(_currentGameEvent.Blackboard);
             }
-            foreach (var property in gameEvent.definedVariables)
+        }
+
+        public void SetBlackboard(AssetBlackboard blackboard)
+        {
+            _blackboard = blackboard;
+            
+            _blackboardContent.Clear();
+            foreach (var property in _blackboard.definedVariables)
             {
-             AddBlackboardProperty(property);
+                AddBlackboardProperty(property);
             }
         }
         
@@ -83,95 +109,66 @@ namespace GameEventSystem.Editor
             if (!blackboardFieldTypes.ContainsKey(property.GetType())) return;
             Type fieldType = blackboardFieldTypes[property.GetType()];
             BlackboardFieldView propertyView = Activator.CreateInstance(fieldType) as BlackboardFieldView;
-            propertyView.blackboardView = this;
-            propertyView.CreateView(gameEvent, property);
+            propertyView.CreateView(_blackboard, property);
+            propertyView.editTextRequested += EditTextRequested;
             propertyView.onRemoveBlackboardProperty += OnRemoveBlackboardProperty;
-            blackboard.Add(propertyView);
+            _blackboardContent.Add(propertyView);
         }
         
         void OnRemoveBlackboardProperty(BlackboardFieldView field)
         {
-            Undo.RecordObject(gameEvent, "Remove Blackboard Property");
+            if (_blackboard == null) return;
+            Undo.RecordObject(_blackboard, "Remove Blackboard Property");
         
-            gameEvent.RemoveVariable(field.property);
-            blackboard.Remove(field);
+            _blackboard.RemoveVariable(field.property);
+            _blackboardContent.Remove(field);
 
-            EditorUtility.SetDirty(gameEvent);
+            EditorUtility.SetDirty(_blackboard);
         }
-
-        public void EditTextRequested(Blackboard blackboard, VisualElement visualElement, string newText)
+        
+        public void EditTextRequested(VisualElement visualElement, string newText)
         {
-            var field = (BlackboardField)visualElement;
+            if (_blackboard == null) return;
+            
+            var field = (GameEventBlackboardField)visualElement;
             var property = (VariableDefinition)field.userData;
 
-             if (!string.IsNullOrEmpty(newText) && newText != property.Name)
-             {
-                 Undo.RecordObject(gameEvent, "Edit Blackboard Text");
+            if (!string.IsNullOrEmpty(newText) && newText != property.Name)
+            {
+                Undo.RecordObject(_currentGameEvent, "Edit Blackboard Text");
             
-                 int count = 0;
-                 string propertyName = newText;
-                 foreach (var boardProperty in gameEvent.definedVariables)
-                 {
-                     if (boardProperty.Name == propertyName) count++;
-                 }
-                 if (count > 0) propertyName += $"({count})";
+                int count = 0;
+                string propertyName = newText;
+                foreach (var boardProperty in _blackboard.definedVariables)
+                {
+                    if (boardProperty.Name == propertyName) count++;
+                }
+                if (count > 0) propertyName += $"({count})";
             
-                 property.Name = propertyName;
-                 field.text = property.Name;
+                property.Name = propertyName;
+                field.text = property.Name;
                  
-                 EditorUtility.SetDirty(gameEvent);
-             }
+                EditorUtility.SetDirty(_blackboard);
+            }
         }
-
-        void AddItemRequested(Blackboard blackboard)
+        
+        private void UseLocalBlackboardOnclicked()
         {
+            if (_currentGameEvent == null) return;
+            SetBlackboard(_currentGameEvent.CreateLocalBlackboard());
+        }
+        
+        private void AddButtonOnclicked()
+        {
+            if (_currentGameEvent == null) return;
+            
             var provider = new VariableDefinitionSearchProvider((type) =>
             {
-                var newProperty = gameEvent.AddVariable(type);
+                var newProperty = _currentGameEvent.AddVariable(type);
                 AddBlackboardProperty(newProperty);
             });
             SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)),
                 provider);
         }
-
-        //void CreateBlackboardProperty(Type type)
-        //{
-            // BlackboardPropertyTypeAttribute attrib = type.GetCustomAttribute<BlackboardPropertyTypeAttribute>();
-            //
-            // Undo.RecordObject(visualGraph, "Add Blackboard Property");
-            //
-            // int count = 0;
-            // string propertyName = attrib.menuName;
-            // foreach (var boardProperty in visualGraph.BlackboardProperties)
-            // {
-            //     if (boardProperty.Name == propertyName) count++;
-            // }
-            // if (count > 0) propertyName += $"({count})";
-            //
-            // Type propertyType = attrib.type;
-            // AbstractBlackboardProperty property = Activator.CreateInstance(propertyType) as AbstractBlackboardProperty;
-            // property.name = attrib.type.Name;
-            // property.Name = propertyName;
-            // property.guid = System.Guid.NewGuid().ToString();
-            // visualGraph.BlackboardProperties.Add(property);
-            //
-            // if (property.name == null || property.name.Trim() == "") property.name = ObjectNames.NicifyVariableName(property.name);
-            // if (!string.IsNullOrEmpty(AssetDatabase.GetAssetPath(visualGraph))) AssetDatabase.AddObjectToAsset(property, visualGraph);
-            //
-            // AddBlackboardProperty(type, property);
-            //
-            // EditorUtility.SetDirty(visualGraph);
-            // AssetDatabase.SaveAssets();
-        //}
-        
-
-        // void AddBlackboardProperty(Type type, AbstractBlackboardProperty property)
-        // {
-        //     BlackboardFieldView propertyView = Activator.CreateInstance(type) as BlackboardFieldView;
-        //     propertyView.blackboardView = this;
-        //     propertyView.CreateView(visualGraph, property);
-        //     propertyView.onRemoveBlackboardProperty += OnRemoveBlackboardProperty;
-        //     blackboard.Add(propertyView);
-        // }
     }
 }

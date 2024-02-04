@@ -1,11 +1,67 @@
-GameEventView
-{
+GameEventView {
     flex-grow: 1;
 }
-#Grid
-{
+
+#Grid {
     --thick-lines: 0;
     --spacing: 15;
-    --grid-background-color: rgb(35,35,35);
-    --line-color: rgb(32,32,32);
+    --grid-background-color: rgb(35, 35, 35);
+    --line-color: rgb(32, 32, 32);
+}
+
+#addButton {
+    background-color: rgba(47, 54, 64, 0);
+    -unity-font-style: bold;
+    font-size: 16px;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    background-image: url('project://database/Assets/Scripts/GameEventSystem/Icons/AddIcon.png?fileID=2800000&guid=70c18ee5e064ae546817ce87bf86436e&type=3#AddIcon');
+    color: rgba(210, 210, 210, 0);
+    -unity-slice-left: 4;
+    -unity-slice-top: 4;
+    -unity-slice-right: 4;
+    -unity-slice-bottom: 4;
+    -unity-background-image-tint-color: rgb(220, 221, 225);
+    -unity-text-align: middle-center;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+:hover > #addButton {
+    background-color: rgb(53, 59, 72);
+    border-left-color: rgb(113, 128, 147);
+    border-right-color: rgb(113, 128, 147);
+    border-top-color: rgb(113, 128, 147);
+    border-bottom-color: rgb(113, 128, 147);
+}
+
+.deleteButton {
+    background-image: url('project://database/Assets/Scripts/GameEventSystem/Icons/RemoveIcon.png?fileID=2800000&guid=d816353886677c249bcc988c21bc5f7b&type=3#RemoveIcon');
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0);
+    color: rgba(210, 210, 210, 0);
+    -unity-slice-left: 2;
+    -unity-slice-top: 2;
+    -unity-slice-right: 2;
+    -unity-slice-bottom: 2;
+    -unity-background-image-tint-color: rgb(194, 54, 22);
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.deleteButton:hover {
+    border-left-color: rgb(113, 128, 147);
+    border-right-color: rgb(113, 128, 147);
+    border-top-color: rgb(113, 128, 147);
+    border-bottom-color: rgb(113, 128, 147);
+    -unity-background-image-tint-color: rgb(194, 54, 22);
+    -unity-slice-left: 2;
+    -unity-slice-top: 2;
+    -unity-slice-right: 2;
+    -unity-slice-bottom: 2;
+    background-color: rgb(40, 40, 40);
+    -unity-background-scale-mode: scale-to-fit;
 }

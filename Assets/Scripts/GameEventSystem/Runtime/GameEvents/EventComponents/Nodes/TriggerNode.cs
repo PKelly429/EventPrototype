@@ -6,7 +6,8 @@ namespace GameEventSystem
 {
     public abstract class TriggerNode : GameEventNode
     {
-        [SerializeField] private bool _repeat;
+        public bool repeat;
+        
         public override void Setup()
         {
             AddListener();
@@ -23,7 +24,7 @@ namespace GameEventSystem
 
         protected void Trigger()
         {
-            if (!_repeat)
+            if (!repeat)
             {
                 state = State.Success;
                 RemoveListener();
