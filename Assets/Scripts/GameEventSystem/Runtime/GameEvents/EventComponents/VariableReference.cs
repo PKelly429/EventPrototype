@@ -71,11 +71,7 @@ namespace GameEventSystem
             {
                 if (_variableDefinition == null)
                 {
-                    ResolveRef(null);
-                    if (_variableDefinition == null)
-                    {
-                        return localValue;
-                    }
+                    return localValue;
                 }
 
                 if (!string.IsNullOrEmpty(propertyName))

@@ -24,14 +24,14 @@ namespace GameEventSystem
             Failure,
             Success
         }
-        [SerializeField] [HideInInspector] private string guid;
+        [SerializeField] private string guid;
         [HideInInspector] [SerializeField] private Rect _position;
         
         [NonSerialized] public State state = State.Idle;
         [HideInInspector] public AssetBlackboard blackboard;
         
         [NonSerialized] public List<GameEventNode> children = new List<GameEventNode>();
-        [HideInInspector] public List<GameEventConnection> connections = new List<GameEventConnection>();
+        public List<GameEventConnection> connections = new List<GameEventConnection>();
 
         public string Id => guid;
         public Rect Position => _position;
@@ -88,7 +88,7 @@ namespace GameEventSystem
             var fields = GetType().GetFields();
             foreach (var field in fields)
             {
-                if (!field.IsPublic) continue;
+                //if (!field.IsPublic) continue;
                 if (field.IsNotSerialized) continue;
                 if (field.GetCustomAttribute(typeof(HideInInspector)) != null) continue;
 
@@ -102,14 +102,11 @@ namespace GameEventSystem
         public void BindBlackboard(AssetBlackboard blackboard)
         {
             this.blackboard = blackboard;
-            
-            Debug.Log($"BindBlackboard: {name}");
-            
+
             var bbParams = GetType().GetFields().Where(fieldInfo => typeof(VariableReference).IsAssignableFrom(fieldInfo.FieldType));
             foreach (var fieldInfo in bbParams)
             {
                 VariableReference param = fieldInfo.GetValue(this) as VariableReference;
-                if(param != null) Debug.Log($"param: {param.name}");
                 param?.ResolveRef(this.blackboard);
             }
         }

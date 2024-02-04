@@ -34,7 +34,7 @@ namespace GameEventSystem
                 clone.AddRuntimeNode(node.Clone());
             }
 
-            Bind();
+            clone.Bind();
             return clone;
         }
 

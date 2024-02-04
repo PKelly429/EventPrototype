@@ -13,13 +13,12 @@ namespace GameEventSystem
     [NodeDescription("Logs a message to the console")]
     public class DebugLogNode : EffectNode
     {
-        [TextArea] public string logText;
-        public BoolParameter _testBool;
+        //[TextArea] public string logText;
         public StringParameter text;
 
         protected override State OnUpdate()
         {
-            Debug.Log(logText);
+            Debug.Log(text.GetValue());
             
             return State.Success;
         }

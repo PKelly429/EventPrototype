@@ -310,11 +310,7 @@ namespace GameEventSystem.Editor
             if (!_connectionDictionary.ContainsKey(edge)) return;
 
             GameEventConnection connection = _connectionDictionary[edge];
-            GameEventNodeView outputNodeView = GetNode(connection.outputNodeId);
-            if (outputNodeView != null)
-            {
-                GetNode(connection.inputNodeId)?.RemoveConnection(connection);
-            }
+            GetNode(connection.inputNodeId)?.RemoveConnection(connection);
             
             _connectionDictionary.Remove(edge);
         }
