@@ -9,5 +9,10 @@ using UnityEngine;
 [Serializable]
 public class EntityDefinition : Variable<Entity>
 {
+}
+
+[Serializable]
+public class EntityParameter : VariableRef<Entity>
+{
 
 }

@@ -13,21 +13,21 @@ MonoBehaviour:
   m_Name: Blackboard
   m_EditorClassIdentifier: 
   _definedVariables:
-  - rid: 4864220838714933255
-  - rid: 4864220851711246337
+  - rid: 4864220851711246340
+  - rid: 4864220851711246342
   _uniqueID: 377ebff3736a3634e96e62a1b43da9ec
   references:
     version: 2
     RefIds:
-    - rid: 4864220838714933255
-      type: {class: BoolVariable, ns: GameEventSystem, asm: GameEventSystem}
-      data:
-        uniqueId: 58d07ebbc5ceb4a43a306d112ba79e78
-        _name: newBoolean
-        _value: 1
-    - rid: 4864220851711246337
+    - rid: 4864220851711246340
       type: {class: StringVariable, ns: GameEventSystem, asm: GameEventSystem}
       data:
-        uniqueId: 2fba942dac756db42b2c38f6247425bf
+        uniqueId: 37e06d7ce82349749a724ed7305210fd
         _name: newString
-        _value: Test String
+        _value: 
+    - rid: 4864220851711246342
+      type: {class: CrewDefinition, ns: , asm: GameEventSystem}
+      data:
+        uniqueId: 2a2ef6009923cde4480005f694b84fa8
+        _name: newCrew
+        _value: {fileID: 0}

@@ -125,32 +125,6 @@ namespace GameEventSystem
         }
 
 #if UNITY_EDITOR
-        public VisualElement CreatePropertyField(VariableReference variableReference)
-        {
-            try
-            {
-                variableReference.ResolveRef(this);
-
-                if (variableReference.variableDefinition == null)
-                {
-                    throw new Exception("Blackboard does not contain this reference");
-                }
-                
-                return BlackboardFieldUtil.GetFieldForParameter(this, variableReference.variableDefinition);
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-            }
-            return new Label("Could not find field info.");
-        }
-
-        public static BaseField<T> GetPropertyField<T, TU>()
-        {
-            Debug.Log($"Get: {typeof(T)} : {typeof(TU)}");
-            return Activator.CreateInstance(typeof(TU)) as BaseField<T>;
-        }
-
         public string GetBindingPath(VariableDefinition property)
         {
             string bindingPath = string.Empty;

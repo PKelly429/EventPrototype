@@ -14,7 +14,6 @@ namespace GameEventSystem
     public abstract class VariableReference
     {
         public string refId;
-        public string blackboardId;
         public string name;
         public string propertyName;
         
@@ -41,8 +40,6 @@ namespace GameEventSystem
                         value.onNameChanged += OnDefinitionNameChanged;
                         value.onRemoved += OnDefinitionRemoved;
                     }
-
-                    UpdateName();
                 }
 #endif
                 _variableDefinition = value;
@@ -95,11 +92,9 @@ namespace GameEventSystem
 #if UNITY_EDITOR
         public void SetRef(VariableSearchProvider.VariableSelection selection)
         {
-            variableDefinition = selection.variable;
-            blackboardId = selection.blackboard.uniqueID;
             propertyName = selection.propertyName;
+            variableDefinition = selection.variable;
             refId = variableDefinition == null ? string.Empty : _variableDefinition.uniqueId;
-
             UpdateName();
         }
 
@@ -146,12 +141,9 @@ namespace GameEventSystem
             var varDef = blackboard.GetVariableByID(refId);
             if (varDef != null)
             {
-                if (varDef.type == type)
-                {
-                    variableDefinition = varDef;   
-                    UpdateName();
-                    return;
-                }
+                variableDefinition = varDef;   
+                UpdateName();
+                return;
             }
             
             RemoveRef();

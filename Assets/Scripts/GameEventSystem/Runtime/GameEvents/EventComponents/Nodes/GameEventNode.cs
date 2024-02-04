@@ -24,14 +24,14 @@ namespace GameEventSystem
             Failure,
             Success
         }
-        [SerializeField] private string guid;
+        [HideInInspector] [SerializeField] private string guid;
         [HideInInspector] [SerializeField] private Rect _position;
         
         [NonSerialized] public State state = State.Idle;
         [HideInInspector] public AssetBlackboard blackboard;
         
         [NonSerialized] public List<GameEventNode> children = new List<GameEventNode>();
-        public List<GameEventConnection> connections = new List<GameEventConnection>();
+        [HideInInspector] public List<GameEventConnection> connections = new List<GameEventConnection>();
 
         public string Id => guid;
         public Rect Position => _position;
@@ -46,7 +46,19 @@ namespace GameEventSystem
                 }
             }
 
+            SortChildren();
+            
             OnSetup();
+        }
+        
+        public void SortChildren() 
+        {
+            children.Sort(SortByHorizontalPosition);
+        }
+        
+        private int SortByHorizontalPosition(GameEventNode left, GameEventNode right) 
+        {
+            return left.Position.x < right.Position.x ? -1 : 1;
         }
         
         public virtual void OnSetup()
@@ -78,19 +90,16 @@ namespace GameEventSystem
         protected abstract State OnUpdate();
 
         #region Graph
-
         public void DrawInspector(VisualElement contentContainer)
         {
-            //var bbParams = GetType().GetFields().Where(fieldInfo => typeof(VariableReference).IsAssignableFrom(fieldInfo.FieldType));
-
             SerializedObject obj = new SerializedObject(this);
             
             var fields = GetType().GetFields();
             foreach (var field in fields)
             {
-                //if (!field.IsPublic) continue;
                 if (field.IsNotSerialized) continue;
                 if (field.GetCustomAttribute(typeof(HideInInspector)) != null) continue;
+                if (field.GetCustomAttribute(typeof(DisplayFieldAttribute)) != null) continue;
 
                 var propertyField = new PropertyField();
                 propertyField.bindingPath = field.Name;

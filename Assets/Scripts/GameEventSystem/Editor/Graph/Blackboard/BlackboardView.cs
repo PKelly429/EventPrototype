@@ -23,8 +23,6 @@ namespace GameEventSystem.Editor
         private AssetBlackboard _blackboard;
         private VisualElement _blackboardContent;
         
-        private Dictionary<Type, Type> blackboardFieldTypes = new Dictionary<Type, Type>();
-
         public BlackboardView()
         {
         }
@@ -42,34 +40,8 @@ namespace GameEventSystem.Editor
             _blackboardTitle = contentContainer.Q<Label>("blackboard-name");
             
             _blackboardContent = contentContainer.Q<ScrollView>("blackboard-params");
-
-            InitBlackboardFields();
         }
-
-        private void InitBlackboardFields()
-        {
-            if (blackboardFieldTypes == null)
-            {
-                blackboardFieldTypes = new Dictionary<Type, Type>();
-            }
-            blackboardFieldTypes.Clear();
-            
-            var assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
-            {
-                var types = assembly.GetTypes();
-                foreach (var type in types)
-                {
-                    if (type.IsSubclassOf(typeof(BlackboardFieldView)) == true && type.IsAbstract == false)
-                    {
-                        BlackboardPropertyTypeAttribute fieldInfo = type.GetCustomAttribute<BlackboardPropertyTypeAttribute>();
-                        if (fieldInfo == null) continue;
-                        blackboardFieldTypes.Add(fieldInfo.type, type);
-                    }
-                }
-            }
-        }
-
+        
         public void SetGameEvent(GameEvent gameEvent)
         {
             _currentGameEvent = gameEvent;
@@ -127,9 +99,8 @@ namespace GameEventSystem.Editor
         public void AddBlackboardProperty(VariableDefinition property)
         {
             if (property == null) return;
-            if (!blackboardFieldTypes.ContainsKey(property.GetType())) return;
-            Type fieldType = blackboardFieldTypes[property.GetType()];
-            BlackboardFieldView propertyView = Activator.CreateInstance(fieldType) as BlackboardFieldView;
+
+            BlackboardFieldView propertyView = new BlackboardFieldView();
             propertyView.CreateView(_blackboard, property);
             propertyView.editTextRequested += EditTextRequested;
             propertyView.onRemoveBlackboardProperty += OnRemoveBlackboardProperty;

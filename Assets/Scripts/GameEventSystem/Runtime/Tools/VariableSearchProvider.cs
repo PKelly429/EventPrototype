@@ -24,18 +24,17 @@ namespace GameEventSystem
         {
             List<SearchTreeEntry> searchList = new List<SearchTreeEntry>();
             searchList.Add(new SearchTreeGroupEntry(new GUIContent("Matching Variable Definitions"), 0));
-            searchList.Add(new SearchTreeGroupEntry(new GUIContent("Local"), 1));
 
             foreach (var variableDefinition in blackboard.definedVariables)
             {
                 if (!IsMatchingType(variableDefinition.type))
                 {
-                    AddExposedFields(searchList, blackboard, variableDefinition, 2);
+                    AddExposedFields(searchList, blackboard, variableDefinition, 1);
                     continue;
                 }
 
                 var entry = new SearchTreeEntry(new GUIContent(variableDefinition.Name));
-                entry.level = 2;
+                entry.level = 1;
                 entry.userData = new VariableSelection()
                 {
                     blackboard = blackboard,

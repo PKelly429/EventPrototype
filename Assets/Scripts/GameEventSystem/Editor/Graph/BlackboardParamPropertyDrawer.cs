@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -13,9 +14,9 @@ namespace GameEventSystem.Editor
         private GameEventNode _node;
         private VariableReference _target;
         private SerializedProperty _serializedProperty;
-        private string _targetRefValue;
-        
+
         private PropertyField _refField;
+        private PropertyField _propertyNameField;
         private PropertyField _valueField;
         private Label _targetField;
         private Label _infoField;
@@ -31,6 +32,11 @@ namespace GameEventSystem.Editor
             _target = ((VariableReference)_node.GetType().GetField(property.name).GetValue(_node));
 
             VisualElement propertyContainer = new VisualElement();
+            
+            var repaintField = new PropertyField(property.FindPropertyRelative("name"));
+            repaintField.RegisterValueChangeCallback(Repaint);
+            repaintField.style.display = DisplayStyle.None;
+            propertyContainer.Add(repaintField);
 
             propertyContainer.AddToClassList("BBParam");
             
@@ -56,10 +62,6 @@ namespace GameEventSystem.Editor
             topRow.style.justifyContent = Justify.FlexEnd;
             bottomRow.style.flexDirection = FlexDirection.Row;
 
-            _refField = new PropertyField(property.FindPropertyRelative("refId"));
-            _refField.RegisterValueChangeCallback(Repaint);
-            _refField.style.display = DisplayStyle.None;
-            
             propertyContainer.Add(_refField);
 
             _valueField = new PropertyField();
@@ -105,9 +107,7 @@ namespace GameEventSystem.Editor
 
         void Repaint()
         {
-            _targetRefValue = _serializedProperty.FindPropertyRelative("refId").stringValue;
-            
-            bool isBound = !string.IsNullOrEmpty(_targetRefValue);
+            bool isBound = _target.HasRef;
 
             if (isBound)
             {

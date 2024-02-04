@@ -141,14 +141,9 @@ namespace GameEventSystem.Editor
         
         public void SortChildren() 
         {
-            _node.children.Sort(SortByHorizontalPosition);
+            _node.SortChildren();
         }
-        
-        private int SortByHorizontalPosition(GameEventNode left, GameEventNode right) 
-        {
-            return left.Position.x < right.Position.x ? -1 : 1;
-        }
-        
+
         public void UpdateState() 
         {
             RemoveFromClassList("idle");
