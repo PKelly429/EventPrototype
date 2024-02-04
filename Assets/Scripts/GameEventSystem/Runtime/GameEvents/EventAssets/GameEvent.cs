@@ -10,16 +10,60 @@ namespace GameEventSystem
     [Serializable]
     public class GameEvent : ScriptableObject
     {
-        public List<GameEventNode> Nodes = new List<GameEventNode>();
-        public List<GameEventConnection> AllConnections = new List<GameEventConnection>();
+        public List<GameEventNode> nodes = new List<GameEventNode>();
+        //public List<GameEventConnection> AllConnections = new List<GameEventConnection>();
 
-        public AssetBlackboard Blackboard;
-        public AssetBlackboard LocalBlackboard;
+        public AssetBlackboard blackboard;
+        [SerializeField] private AssetBlackboard _localBlackboard;
 
 
         [ScriptableObjectIdAttribute] [SerializeField]
         private string _uniqueID;
 
+        [NonSerialized] private Dictionary<string, GameEventNode> nodeLookup = new Dictionary<string, GameEventNode>();
+        
+        private List<GameEventNode> _activeNodes = new List<GameEventNode>();
+
+        public GameEvent Clone()
+        {
+            GameEvent clone = Instantiate(this);
+            clone.blackboard = AssetBlackboard.GetBlackboard(blackboard.uniqueID);
+            clone.nodes.Clear();
+            foreach (var node in nodes)
+            {
+                clone.AddRuntimeNode(node.Clone());
+            }
+
+            Bind();
+            return clone;
+        }
+
+        private void AddRuntimeNode(GameEventNode node)
+        {
+            nodes.Add(node);
+            nodeLookup.Add(node.Id, node);
+        }
+        
+        public void Setup()
+        {
+            foreach (var node in nodes)
+            {
+                node.Setup(this);
+            }
+        }
+        
+        public void Bind() 
+        {
+            foreach (var node in nodes)
+            {
+                node.BindBlackboard(blackboard);
+            }
+        }
+
+        public GameEventNode GetNode(string id)
+        {
+            return nodeLookup[id];
+        }
 
         #region Editor Compatibility
 #if UNITY_EDITOR
@@ -28,7 +72,7 @@ namespace GameEventSystem
             var node = ScriptableObject.CreateInstance(type) as GameEventNode;
             node.name = $"{type.Name}";
             node.GenerateGUID();
-            Nodes.Add(node);
+            nodes.Add(node);
 
             if (!Application.isPlaying)
             {
@@ -43,7 +87,7 @@ namespace GameEventSystem
 
         public void RemoveNode(GameEventNode node)
         {
-            Nodes.Remove(node);
+            nodes.Remove(node);
             AssetDatabase.RemoveObjectFromAsset(node);
             Undo.DestroyObjectImmediate(node);
             AssetDatabase.SaveAssets();
@@ -51,34 +95,25 @@ namespace GameEventSystem
 
         public AssetBlackboard CreateLocalBlackboard()
         {
-            if (LocalBlackboard == null)
+            if (_localBlackboard == null)
             {
-                LocalBlackboard = ScriptableObject.CreateInstance(typeof(AssetBlackboard)) as AssetBlackboard;
-                LocalBlackboard.name = "LocalBlackboard";
+                _localBlackboard = ScriptableObject.CreateInstance(typeof(AssetBlackboard)) as AssetBlackboard;
+                _localBlackboard.name = "LocalBlackboard";
                 if (!Application.isPlaying)
                 {
-                    AssetDatabase.AddObjectToAsset(LocalBlackboard, this);
+                    AssetDatabase.AddObjectToAsset(_localBlackboard, this);
                 }
                 AssetDatabase.SaveAssets();
             }
 
-            Blackboard = LocalBlackboard;
+            blackboard = _localBlackboard;
             
-            return Blackboard;
+            return blackboard;
         }
 #endif
     #endregion
 
-        private List<GameEventNode> _activeNodes = new List<GameEventNode>();
-        public void Setup()
-        {
-            foreach (var node in Nodes)
-            {
-                node.Setup();
-            }
-        }
-
-        #region IBlackboard
+    #region IBlackboard
 
         [SerializeField] private List<VariableDefinition> _definedVariables = new List<VariableDefinition>();
         
@@ -87,7 +122,7 @@ namespace GameEventSystem
 
         public VariableDefinition AddVariable(Type type)
         {
-            return Blackboard.AddVariable(type);
+            return blackboard.AddVariable(type);
             // VariableDefinition variable = ScriptableObject.CreateInstance(type) as VariableDefinition;
             // variable.Name = $"new{variable.type.Name}";
             //
@@ -102,7 +137,7 @@ namespace GameEventSystem
 
         public void RemoveVariable(VariableDefinition variable)
         {
-            Blackboard.RemoveVariable(variable);
+            blackboard.RemoveVariable(variable);
             
             // variable.Delete();
             // definedVariables.Remove(variable);

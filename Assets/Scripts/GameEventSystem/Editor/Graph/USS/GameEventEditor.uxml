@@ -5,7 +5,7 @@
     </uie:Toolbar>
     <GameEventSystem.Editor.SplitView fixed-pane-initial-dimension="250">
         <ui:VisualElement name="left-panel">
-            <GameEventSystem.Editor.SplitView orientation="Vertical" fixed-pane-initial-dimension="450">
+            <GameEventSystem.Editor.SplitView orientation="Vertical" fixed-pane-initial-dimension="200">
                 <ui:VisualElement name="blackboard-container">
                     <ui:VisualElement name="blackboard-header" style="background-color: rgb(40, 40, 40); font-size: 16px; -unity-font-style: normal; flex-shrink: 0;">
                         <ui:Label text="Blackboard" display-tooltip-when-elided="true" name="blackboard-header-label" style="color: rgb(220, 221, 225); font-size: 14px;" />
@@ -27,10 +27,10 @@
                     </GameEventSystem.Editor.BlackboardView>
                 </ui:VisualElement>
                 <ui:VisualElement name="inspector-container">
-                    <ui:VisualElement name="inspector-header" style="background-color: rgb(40, 40, 40); font-size: 16px; -unity-font-style: normal;">
+                    <ui:VisualElement name="inspector-header" style="background-color: rgb(40, 40, 40); font-size: 16px; -unity-font-style: normal; flex-shrink: 0;">
                         <ui:Label text="Inspector" display-tooltip-when-elided="true" name="inspector-header-label" style="color: rgb(220, 221, 225); font-size: 14px;" />
                     </ui:VisualElement>
-                    <GameEventSystem.Editor.InspectorView name="inspector-panel" style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px;" />
+                    <GameEventSystem.Editor.InspectorView name="inspector-panel" style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; flex-shrink: 0;" />
                 </ui:VisualElement>
             </GameEventSystem.Editor.SplitView>
         </ui:VisualElement>

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -24,18 +26,19 @@ namespace GameEventSystem.Editor
 
             _selectedNode = nodeView;
             if (nodeView == null || nodeView.Node == null) return;
-            
-            _editor = UnityEditor.Editor.CreateEditor(nodeView.Node);
-            IMGUIContainer container = new IMGUIContainer(() =>
-            {
-                if (_editor.target == null)
-                {
-                    UpdateSelection(null);
-                    return;
-                }
-                _editor.OnInspectorGUI();
-            });
-            Add(container);
+
+            nodeView.Node.DrawInspector(this);
+            // _editor = UnityEditor.Editor.CreateEditor(nodeView.Node);
+            // IMGUIContainer container = new IMGUIContainer(() =>
+            // {
+            //     if (_editor.target == null)
+            //     {
+            //         UpdateSelection(null);
+            //         return;
+            //     }
+            //     _editor.OnInspectorGUI();
+            // });
+            //Add(container);
         }
 
         public void HandleNodeUnselected(GameEventNodeView nodeView)

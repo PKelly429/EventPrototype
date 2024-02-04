@@ -20,10 +20,7 @@ namespace GameEventSystem.Editor
         public Action<GameEventNodeView> OnNodeUnselected;
 
         public override bool supportsWindowedBlackboard => true;
-        public MiniMap Minimap { get; private set; }
-        public GraphBlackboardView GraphBlackboardView { get; private set; }
-        public Blackboard Blackboard { get { return GraphBlackboardView.blackboard; } private set { } }
-        
+
         private GameEvent _gameEvent;
         private SerializedObject _serializedObject;
         private GameEventEditorWindow _window;
@@ -189,38 +186,21 @@ namespace GameEventSystem.Editor
         private void CreateEdge(Edge edge)
         {
             // edge.output and edge.input are reversed from what I would expect
-            GameEventNodeView inputNodeView = (GameEventNodeView)edge.output.node;
-            GameEventNodeView outputNodeView = (GameEventNodeView)edge.input.node;
-
+            GameEventNodeView parentNodeView = (GameEventNodeView)edge.output.node;
+            GameEventNodeView childNodeView = (GameEventNodeView)edge.input.node;
+            
             GameEventConnection connection =
-                new GameEventConnection(inputNodeView.Id, outputNodeView.Id);
-
-            _gameEvent.AllConnections.Add(connection);
-            inputNodeView.AddOutput(outputNodeView.Node);
+                new GameEventConnection(parentNodeView.GetOutputPortIndex(edge.output), parentNodeView.Id, childNodeView.Id);
+            
+            parentNodeView.AddConnection(connection);
 
             _connectionDictionary.Add(edge, connection);
         }
 
-        // private void DrawBlackboard()
-        // {
-        //     GraphBlackboardView = new GraphBlackboardView();
-        //     GraphBlackboardView.gameEventView = this;
-        //     GraphBlackboardView.SetVisualGraph(_gameEvent);
-        //     Blackboard.SetPosition(new Rect(10, 30, 250, 300));
-        //     Add(GraphBlackboardView.blackboard);
-        // }
-
-        // private void RemoveBlackboard()
-        // {
-        //     if (GraphBlackboardView?.blackboard == null) return;
-        //     
-        //     Remove(GraphBlackboardView.blackboard);
-        // }
-
         private void DrawNodes()
         {
-            if (_gameEvent.Nodes == null) return;
-            foreach (var node in _gameEvent.Nodes)
+            if (_gameEvent.nodes == null) return;
+            foreach (var node in _gameEvent.nodes)
             {
                 AddNodeToGraph(node);
             }
@@ -228,11 +208,20 @@ namespace GameEventSystem.Editor
 
         private void DrawConnections()
         {
-            if (_gameEvent.AllConnections == null) return;
-            foreach (var connection in _gameEvent.AllConnections)
+            // if (_gameEvent.AllConnections == null) return;
+            // foreach (var connection in _gameEvent.AllConnections)
+            // {
+            //     AddConnection(connection);
+            // }
+            
+            _gameEvent.nodes.ForEach(n =>
             {
-                AddConnection(connection);
-            }
+                var connectins = n.connections;
+                connectins.ForEach(c => 
+                {
+                    AddConnection(GetNode(n.Id), c);
+                });
+            });
         }
 
         private void AddNode(Type nodeType, Vector2 mousePosition)
@@ -300,15 +289,14 @@ namespace GameEventSystem.Editor
             _serializedObject.Update();
         }
 
-        private void AddConnection(GameEventConnection connection)
+        private void AddConnection(GameEventNodeView inputNodeView, GameEventConnection connection)
         {
-            GameEventNodeView inputNodeView = GetNode(connection.InputNodeId);
-            GameEventNodeView outputNodeView = GetNode(connection.OutputNodeId);
+            GameEventNodeView outputNodeView = GetNode(connection.outputNodeId);
 
             if (inputNodeView == null || outputNodeView == null) return;
-
-            Port inputPort = inputNodeView.OutputPort;
-            Port outputPort = outputNodeView.InputPort;
+            
+            Port inputPort = inputNodeView.outputPorts[connection.portId];
+            Port outputPort = outputNodeView.inputPort;
 
             Edge edge = inputPort.ConnectTo(outputPort);
 
@@ -322,13 +310,12 @@ namespace GameEventSystem.Editor
             if (!_connectionDictionary.ContainsKey(edge)) return;
 
             GameEventConnection connection = _connectionDictionary[edge];
-            GameEventNodeView outputNodeView = GetNode(connection.OutputNodeId);
+            GameEventNodeView outputNodeView = GetNode(connection.outputNodeId);
             if (outputNodeView != null)
             {
-                GetNode(connection.InputNodeId)?.RemoveOutput(outputNodeView.Node);
+                GetNode(connection.inputNodeId)?.RemoveConnection(connection);
             }
-
-            _gameEvent.AllConnections.Remove(connection);
+            
             _connectionDictionary.Remove(edge);
         }
 

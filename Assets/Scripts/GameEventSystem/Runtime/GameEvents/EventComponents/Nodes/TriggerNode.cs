@@ -8,7 +8,7 @@ namespace GameEventSystem
     {
         public bool repeat;
         
-        public override void Setup()
+        public override void OnSetup()
         {
             AddListener();
             state = State.Running;
@@ -29,7 +29,7 @@ namespace GameEventSystem
                 state = State.Success;
                 RemoveListener();
             }
-            foreach (var node in Outputs)
+            foreach (var node in children)
             {
                 node.Execute();
             }

@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
 namespace GameEventSystem.Editor
@@ -22,20 +23,7 @@ namespace GameEventSystem.Editor
         private bool showTriggers = true;
         private bool showConditions = true;
         private bool showEffects = true;
-
         
-        [OnOpenAsset]
-        public static bool OnOpenAsset(int instanceId, int index)
-        {
-            Object asset = EditorUtility.InstanceIDToObject(instanceId);
-            if (asset.GetType() == typeof(GameEvent))
-            {
-                GameEventEditorWindow.Open((GameEvent)asset);
-                return true;
-            }
-
-            return false;
-        }
 
         private void OnEnable()
         {

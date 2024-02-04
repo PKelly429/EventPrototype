@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace GameEventSystem
 {
@@ -114,11 +116,14 @@ namespace GameEventSystem
     {
     }
 
-    [AddTypeMenu("BuiltIn/Rotation")]
-    [Serializable]
-    public class RotationVariable : Variable<Quaternion>
-    {
-    }
+//     [AddTypeMenu("BuiltIn/Rotation")]
+// #if UNITY_EDITOR
+//     [BlackboardFieldType(typeof(Vector3Field))]
+// #endif
+//     [Serializable]
+//     public class RotationVariable : Variable<Quaternion>
+//     {
+//     }
     
     [AddTypeMenu("BuiltIn/Object")]
     [Serializable]

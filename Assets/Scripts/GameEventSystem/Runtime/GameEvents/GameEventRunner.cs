@@ -11,7 +11,7 @@ namespace GameEventSystem
 
         [NonSerialized] private GameEvent _runningEvent;
 
-        public GameEvent GameEvent => _gameEvent;
+        public GameEvent GameEvent => _runningEvent;
 
         public void OnEnable()
         {
@@ -24,8 +24,8 @@ namespace GameEventSystem
         private void SetupEvent()
         {
             if (_gameEvent == null) return;
-            
-            _runningEvent = Instantiate(_gameEvent);
+
+            _runningEvent = _gameEvent.Clone();
             _runningEvent.Setup();
         }
         

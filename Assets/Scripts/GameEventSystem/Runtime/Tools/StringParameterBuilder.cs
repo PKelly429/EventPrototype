@@ -80,7 +80,7 @@ namespace GameEventSystem
                 EditorGUILayout.LabelField($"{i}:", GUILayout.Width(20));
                 if (GUILayout.Button(parameters[i].GetName(), EditorStyles.linkLabel, GUILayout.ExpandWidth(false)))
                 {
-                    ShowEntitySearchWindow.Open(localBlackboard, new List<IBlackboard>(), parameters[i]);
+                    ShowEntitySearchWindow.Open(localBlackboard, parameters[i]);
                 }
 
                 GUILayout.FlexibleSpace();

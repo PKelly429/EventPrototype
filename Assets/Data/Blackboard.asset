@@ -12,8 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 685fb3b19a74af94c9d700d2c9a2db1d, type: 3}
   m_Name: Blackboard
   m_EditorClassIdentifier: 
-  _definedVariables: []
-  _uniqueID: 
+  _definedVariables:
+  - rid: 4864220838714933255
+  - rid: 4864220851711246337
+  _uniqueID: 377ebff3736a3634e96e62a1b43da9ec
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 4864220838714933255
+      type: {class: BoolVariable, ns: GameEventSystem, asm: GameEventSystem}
+      data:
+        uniqueId: 58d07ebbc5ceb4a43a306d112ba79e78
+        _name: newBoolean
+        _value: 1
+    - rid: 4864220851711246337
+      type: {class: StringVariable, ns: GameEventSystem, asm: GameEventSystem}
+      data:
+        uniqueId: 2fba942dac756db42b2c38f6247425bf
+        _name: newString
+        _value: 

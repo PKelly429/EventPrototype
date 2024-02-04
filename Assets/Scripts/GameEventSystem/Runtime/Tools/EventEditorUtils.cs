@@ -12,12 +12,6 @@ namespace GameEventSystem
         {
             public static void DrawLinkText(string text, IBlackboard blackboard, params VariableReference[] variables)
             {
-                DrawLinkText(text, blackboard, new List<IBlackboard>(), variables);
-            }
-
-            public static void DrawLinkText(string text, IBlackboard blackboard, List<IBlackboard> extraBlackboards,
-                params VariableReference[] variables)
-            {
                 if (string.IsNullOrEmpty(text))
                 {
                     return;
@@ -40,7 +34,7 @@ namespace GameEventSystem
                         if (GUILayout.Button(variables[i].GetName(), EditorStyles.linkLabel,
                             GUILayout.ExpandWidth(false)))
                         {
-                            ShowEntitySearchWindow.Open(blackboard, extraBlackboards, variables[i]);
+                            ShowEntitySearchWindow.Open(blackboard, variables[i]);
                         }
 
                         i++;

@@ -19,11 +19,16 @@ namespace GameEventSystem.Editor
         public string Id => Node.Id;
 
         public List<Port> Ports = new List<Port>();
-        public Port InputPort => _inputPort;
-        public Port OutputPort => _outputPort;
+        public Port inputPort => _inputPort;
+        public Port[] outputPorts => _outputPorts;
         
         private Port _inputPort;
-        private Port _outputPort;
+        private Port[] _outputPorts;
+
+        public int GetOutputPortIndex(Port port)
+        {
+            return Array.IndexOf(outputPorts,port);
+        }
         
         public GameEventNodeView(GameEventNode node) : base("Assets/Scripts/GameEventSystem/Editor/Graph/USS/NodeView.uxml")
         {
@@ -59,7 +64,8 @@ namespace GameEventSystem.Editor
             }
             if (info.HasFlowOutput)
             {
-                CreateFlowOutputPort();
+                _outputPorts = new Port[1];
+                CreateFlowOutputPort(0);
             }
             
             node.DrawContent(this.Q<VisualElement>("node-content"));
@@ -109,24 +115,23 @@ namespace GameEventSystem.Editor
             inputContainer.Add(_inputPort);
         }
         
-        private void CreateFlowOutputPort()
+        private void CreateFlowOutputPort(int index)
         {
-            _outputPort = new NodePort(Direction.Output, Port.Capacity.Multi);
-            _outputPort.portName = string.Empty;
-            _outputPort.style.flexDirection = FlexDirection.ColumnReverse;
-            _outputPort.tooltip = "Flow output";
-            Ports.Add(_outputPort);
-            outputContainer.Add(_outputPort);
+            outputPorts[index] = new NodePort(Direction.Output, Port.Capacity.Multi);
+            outputPorts[index].portName = string.Empty;
+            outputPorts[index].style.flexDirection = FlexDirection.ColumnReverse;
+            outputPorts[index].tooltip = "Flow output";
+            outputContainer.Add(outputPorts[index]);
         }
 
-        public void AddOutput(GameEventNode node)
+        public void AddConnection(GameEventConnection connection)
         {
-            _node.AddOutput(node);
+            _node.AddConnection(connection);
         }
         
-        public void RemoveOutput(GameEventNode node)
+        public void RemoveConnection(GameEventConnection connection)
         {
-            _node.RemoveOutput(node);
+            _node.RemoveConnection(connection);
         }
 
         public void SavePosition()
@@ -136,7 +141,7 @@ namespace GameEventSystem.Editor
         
         public void SortChildren() 
         {
-            _node.Outputs.Sort(SortByHorizontalPosition);
+            _node.children.Sort(SortByHorizontalPosition);
         }
         
         private int SortByHorizontalPosition(GameEventNode left, GameEventNode right) 

@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace GameEventSystem.Editor
 {
@@ -73,23 +75,38 @@ namespace GameEventSystem.Editor
                 });
             });
             _toolbarMenu.menu.AppendSeparator();
-            _toolbarMenu.menu.AppendAction("New Tree...", (a) => CreateNewTree("NewEvent"));
+            _toolbarMenu.menu.AppendAction("New GameEvent...", (a) => CreateNewGameEvent("NewEvent"));
             
             // New Tree Dialog
             _newEventNameField = rootVisualElement.Q<TextField>("EventName");
             _locationPathField = rootVisualElement.Q<TextField>("LocationPath");
             _overlay = rootVisualElement.Q<VisualElement>("Overlay");
             _createNewButton = rootVisualElement.Q<Button>("CreateButton");
-            _createNewButton.clicked += () => CreateNewTree(_newEventNameField.value);
+            _createNewButton.clicked += () => CreateNewGameEvent(_newEventNameField.value);
             
             _currentView.OnNodeSelected += OnNodeSelectionChanged;
             _currentView.OnNodeUnselected += OnNodeUnselected;
         }
         
-        List<T> LoadAssets<T>() where T : UnityEngine.Object {
+        [OnOpenAsset]
+        public static bool OnOpenAsset(int instanceId, int index)
+        {
+            Object asset = EditorUtility.InstanceIDToObject(instanceId);
+            if (asset.GetType() == typeof(GameEvent))
+            {
+                GameEventEditorWindow.Open((GameEvent)asset);
+                return true;
+            }
+
+            return false;
+        }
+
+        List<T> LoadAssets<T>() where T : UnityEngine.Object 
+        {
             string[] assetIds = AssetDatabase.FindAssets($"t:{typeof(T).Name}");
             List<T> assets = new List<T>();
-            foreach (var assetId in assetIds) {
+            foreach (var assetId in assetIds) 
+            {
                 string path = AssetDatabase.GUIDToAssetPath(assetId);
                 T asset = AssetDatabase.LoadAssetAtPath<T>(path);
                 assets.Add(asset);
@@ -161,6 +178,15 @@ namespace GameEventSystem.Editor
                             gameEvent = runner.GameEvent;
                         }
                     }
+                    else
+                    {
+                        AssetBlackboard blackboard = Selection.activeObject as AssetBlackboard;
+                        if (blackboard)
+                        {
+                            Load(null);
+                            _blackboardView.SetBlackboard(blackboard);
+                        }
+                    }
                 }
 
                 if (!gameEvent) return;
@@ -183,16 +209,23 @@ namespace GameEventSystem.Editor
 
         private void DrawGraph()
         {
-            if (_currentEvent == null) return;
             if (_currentView == null) return;
-            
-             _serializedObject = new SerializedObject(_currentEvent);
-             _currentView.PopulateView(_serializedObject, this);
+            if (_currentEvent == null)
+            {
+                _currentView.ClearView();
+                titleContent = new GUIContent($"(none)", EditorGUIUtility.ObjectContent(null, typeof(GameEvent)).image);
+                return;
+            }
+
+            titleContent = new GUIContent($"{_currentEvent.name}", EditorGUIUtility.ObjectContent(null, typeof(GameEvent)).image);
+            _serializedObject = new SerializedObject(_currentEvent);
+            _currentView.PopulateView(_serializedObject, this);
         }
         
-        void CreateNewTree(string assetName) 
+        void CreateNewGameEvent(string assetName) 
         {
             string path = System.IO.Path.Combine(_locationPathField.value, $"{assetName}.asset");
+            path = AssetDatabase.GenerateUniqueAssetPath(path);
             GameEvent newEvent = ScriptableObject.CreateInstance<GameEvent>();
             newEvent.name = _newEventNameField.ToString();
             AssetDatabase.CreateAsset(newEvent, path);

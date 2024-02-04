@@ -1,8 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Unity.Collections;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.UIElements;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -20,17 +24,32 @@ namespace GameEventSystem
             Failure,
             Success
         }
-        
-        [HideInInspector] public State state = State.Idle;
         [SerializeField] [HideInInspector] private string guid;
-        
-        [HideInInspector] public List<GameEventNode> Outputs = new List<GameEventNode>();
         [HideInInspector] [SerializeField] private Rect _position;
+        
+        [NonSerialized] public State state = State.Idle;
+        [HideInInspector] public AssetBlackboard blackboard;
+        
+        [NonSerialized] public List<GameEventNode> children = new List<GameEventNode>();
+        [HideInInspector] public List<GameEventConnection> connections = new List<GameEventConnection>();
 
         public string Id => guid;
         public Rect Position => _position;
 
-        public virtual void Setup()
+        public void Setup(GameEvent parent)
+        {
+            foreach (var connection in connections)
+            {
+                if (connection.portId == 0)
+                {
+                    children.Add(parent.GetNode(connection.outputNodeId));   
+                }
+            }
+
+            OnSetup();
+        }
+        
+        public virtual void OnSetup()
         {
             
         }
@@ -59,6 +78,44 @@ namespace GameEventSystem
         protected abstract State OnUpdate();
 
         #region Graph
+
+        public void DrawInspector(VisualElement contentContainer)
+        {
+            //var bbParams = GetType().GetFields().Where(fieldInfo => typeof(VariableReference).IsAssignableFrom(fieldInfo.FieldType));
+
+            SerializedObject obj = new SerializedObject(this);
+            
+            var fields = GetType().GetFields();
+            foreach (var field in fields)
+            {
+                if (!field.IsPublic) continue;
+                if (field.IsNotSerialized) continue;
+                if (field.GetCustomAttribute(typeof(HideInInspector)) != null) continue;
+
+                var propertyField = new PropertyField();
+                propertyField.bindingPath = field.Name;
+                propertyField.Bind(obj);
+                contentContainer.Add(propertyField);
+            }
+        }
+
+        public void BindBlackboard(AssetBlackboard blackboard)
+        {
+            this.blackboard = blackboard;
+            
+            Debug.Log($"BindBlackboard: {name}");
+            
+            var bbParams = GetType().GetFields().Where(fieldInfo => typeof(VariableReference).IsAssignableFrom(fieldInfo.FieldType));
+            foreach (var fieldInfo in bbParams)
+            {
+                VariableReference param = fieldInfo.GetValue(this) as VariableReference;
+                if(param != null) Debug.Log($"param: {param.name}");
+                param?.ResolveRef(this.blackboard);
+            }
+        }
+
+
+        
         public virtual void DrawContent(VisualElement contentContainer)
         {
 #if UNITY_EDITOR
@@ -89,15 +146,15 @@ namespace GameEventSystem
             EditorUtility.SetDirty(this);
         }
         
-        public void AddOutput(GameEventNode node)
+        public void AddConnection(GameEventConnection connection)
         {
-            Outputs.Add(node);
+            connections.Add(connection);
             EditorUtility.SetDirty(this);
         }
 
-        public void RemoveOutput(GameEventNode node)
+        public void RemoveConnection(GameEventConnection connection)
         {
-            Outputs.Remove(node);
+            connections.Remove(connection);
             EditorUtility.SetDirty(this);
         }
 

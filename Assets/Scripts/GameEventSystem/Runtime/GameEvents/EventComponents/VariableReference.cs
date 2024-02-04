@@ -1,8 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.UIElements;
+#endif
 
 namespace GameEventSystem
 {
@@ -13,6 +17,8 @@ namespace GameEventSystem
         public string blackboardId;
         public string name;
         public string propertyName;
+        
+        public abstract object localValue { get; set; }
 
         private VariableDefinition _variableDefinition;
 
@@ -68,7 +74,7 @@ namespace GameEventSystem
                     ResolveRef(null);
                     if (_variableDefinition == null)
                     {
-                        return null;
+                        return localValue;
                     }
                 }
 
@@ -82,6 +88,13 @@ namespace GameEventSystem
         }
 
         public bool HasRef => !string.IsNullOrEmpty(refId);
+
+        public void RemoveRef()
+        {
+            refId = string.Empty;
+            name = string.Empty;
+            propertyName = string.Empty;
+        }
 
 #if UNITY_EDITOR
         public void SetRef(VariableSearchProvider.VariableSelection selection)
@@ -101,9 +114,7 @@ namespace GameEventSystem
 
         private void OnDefinitionRemoved()
         {
-            refId = string.Empty;
-            name = string.Empty;
-            propertyName = string.Empty;
+            RemoveRef();
         }
 #endif
 
@@ -131,42 +142,50 @@ namespace GameEventSystem
             return name;
         }
 
-        public void ResolveRef(IBlackboard localBlackboard)
+        public void ResolveRef(IBlackboard blackboard)
         {
             if (string.IsNullOrEmpty(refId)) return;
-            IBlackboard blackboard = localBlackboard;
-            if (localBlackboard == null || localBlackboard.uniqueID != blackboardId)
-            {
-                blackboard = AssetBlackboard.GetBlackboard(blackboardId);
-            }
-
+            
             if (blackboard == null) return;
             var varDef = blackboard.GetVariableByID(refId);
             if (varDef != null)
             {
-                variableDefinition = varDef;
+                if (varDef.type == type)
+                {
+                    variableDefinition = varDef;   
+                    UpdateName();
+                    return;
+                }
             }
-
-            UpdateName();
+            
+            RemoveRef();
         }
     }
 
-    public class VariableRef<T> : VariableReference
+    public abstract class VariableRef<T> : VariableReference
     {
         public override Type type => typeof(T);
         public T GetValue() => (T)value;
-    }
 
+        [SerializeField] private T _localValue;
+
+        public override object localValue
+        {
+            get => _localValue;
+            set => _localValue = (T)value;
+        }
+    }
+    
     [System.Serializable]
     public class IntParameter : VariableRef<int>
     {
     }
-
+    
     [System.Serializable]
     public class BoolParameter : VariableRef<bool>
     {
     }
-
+    
     [System.Serializable]
     public class StringParameter : VariableRef<string>
     {

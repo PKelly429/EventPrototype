@@ -1,50 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-6455840490596457902
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaaf7c637d989c84497476393b4e2d74, type: 3}
-  m_Name: OnStartTrigger
-  m_EditorClassIdentifier: 
-  state: 0
-  guid: 1318655b2b1ac0f49850345617bba2bb
-  Outputs:
-  - {fileID: -6255983536722764207}
-  _position:
-    serializedVersion: 2
-    x: 104.14361
-    y: 83.80654
-    width: 0
-    height: 0
-  Repeat: 0
---- !u!114 &-6255983536722764207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be3da043a51af8d41a4bb4296ec09d7d, type: 3}
-  m_Name: DebugLogNode
-  m_EditorClassIdentifier: 
-  state: 0
-  guid: f6535de5d43e5f44e939d45b049d1f18
-  Outputs: []
-  _position:
-    serializedVersion: 2
-    x: 68.44446
-    y: 263.1111
-    width: 219.55554
-    height: 198.22223
-  LogText: 
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57,17 +12,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae317b6087e24f14d8d86b361377340b, type: 3}
   m_Name: NewEvent
   m_EditorClassIdentifier: 
-  Nodes:
-  - {fileID: -6455840490596457902}
-  - {fileID: -6255983536722764207}
-  AllConnections:
-  - Id: 6c72b922-71f2-4b3e-b59c-5b3bbbf340b5
-    InputNodeId: 1318655b2b1ac0f49850345617bba2bb
-    OutputNodeId: f6535de5d43e5f44e939d45b049d1f18
-  Blackboard: {fileID: 5251637113762964608}
-  LocalBlackboard: {fileID: 5251637113762964608}
-  _uniqueID: 
---- !u!114 &5251637113762964608
+  nodes:
+  - {fileID: 8676392397327328601}
+  - {fileID: 34881906257453894}
+  blackboard: {fileID: 583946911106299418}
+  _localBlackboard: {fileID: 583946911106299418}
+  _uniqueID: b9acbc10bae39464d96f81e2c9429006
+--- !u!114 &34881906257453894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3da043a51af8d41a4bb4296ec09d7d, type: 3}
+  m_Name: DebugLogNode
+  m_EditorClassIdentifier: 
+  guid: 1e7010f2a1a0f694e8da0ad938af8d83
+  _position:
+    serializedVersion: 2
+    x: 228.44446
+    y: 187.55556
+    width: 162.66669
+    height: 104.8889
+  blackboard: {fileID: 583946911106299418}
+  connections: []
+  logText: 
+  _testBool:
+    refId: 
+    blackboardId: 377ebff3736a3634e96e62a1b43da9ec
+    name: 
+    propertyName: 
+    _localValue: 0
+  text:
+    refId: 
+    blackboardId: 
+    name: 
+    propertyName: 
+    _localValue: 
+--- !u!114 &583946911106299418
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -79,43 +64,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 685fb3b19a74af94c9d700d2c9a2db1d, type: 3}
   m_Name: LocalBlackboard
   m_EditorClassIdentifier: 
-  _definedVariables:
-  - rid: 4864220838714933248
-  - rid: 4864220838714933249
-  - rid: 4864220838714933252
-  - rid: 4864220838714933253
-  - rid: 4864220838714933254
-  _uniqueID: b9acbc10bae39464d96f81e2c9429006
+  _definedVariables: []
+  _uniqueID: 
   references:
     version: 2
-    RefIds:
-    - rid: 4864220838714933248
-      type: {class: StringVariable, ns: GameEventSystem, asm: GameEventSystem}
-      data:
-        uniqueId: 0d9ae329273c78448b93ac810d30c1c6
-        _name: newString
-        _value: test
-    - rid: 4864220838714933249
-      type: {class: FloatVariable, ns: GameEventSystem, asm: GameEventSystem}
-      data:
-        uniqueId: 67c37136a6385294797ac0f97f7520f2
-        _name: testRename
-        _value: 4
-    - rid: 4864220838714933252
-      type: {class: FloatVariable, ns: GameEventSystem, asm: GameEventSystem}
-      data:
-        uniqueId: 2716fe29b0571e14c8fa151fafc6d7e6
-        _name: newSingle
-        _value: 0
-    - rid: 4864220838714933253
-      type: {class: FloatVariable, ns: GameEventSystem, asm: GameEventSystem}
-      data:
-        uniqueId: 39f8082b4a74291409d8218c8c888271
-        _name: newSingle
-        _value: 0
-    - rid: 4864220838714933254
-      type: {class: ColourVariable, ns: GameEventSystem, asm: GameEventSystem}
-      data:
-        uniqueId: 8633ec0506007794f88177de949a7f75
-        _name: newColor
-        _value: {r: 0, g: 0, b: 0, a: 0}
+    RefIds: []
+--- !u!114 &8676392397327328601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaaf7c637d989c84497476393b4e2d74, type: 3}
+  m_Name: OnStartTrigger
+  m_EditorClassIdentifier: 
+  guid: 1e18e51c15fa4e94db23205f9f24f2a7
+  _position:
+    serializedVersion: 2
+    x: 241.22223
+    y: 43.111107
+    width: 0
+    height: 0
+  blackboard: {fileID: 583946911106299418}
+  connections:
+  - guid: c4ad2b91-8714-4178-a553-e3916f94f4f4
+    portId: 0
+    inputNodeId: 1e18e51c15fa4e94db23205f9f24f2a7
+    outputNodeId: 9e9810994f4ba4141ab74c2ea9222221
+  repeat: 0

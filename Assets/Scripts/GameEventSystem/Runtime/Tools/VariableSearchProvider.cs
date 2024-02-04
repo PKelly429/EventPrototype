@@ -10,15 +10,12 @@ namespace GameEventSystem
     public class VariableSearchProvider : ScriptableObject, ISearchWindowProvider
     {
         private readonly IBlackboard blackboard;
-        private readonly List<IBlackboard> extraBlackboards;
         private Action<VariableSelection> onSelectCallback;
         private Type searchType;
 
-        public VariableSearchProvider(IBlackboard blackboard, List<IBlackboard> extraBlackboards,
-            Action<VariableSelection> onSelectCallback, Type type)
+        public VariableSearchProvider(IBlackboard blackboard, Action<VariableSelection> onSelectCallback, Type type)
         {
             this.blackboard = blackboard;
-            this.extraBlackboards = extraBlackboards;
             this.onSelectCallback = onSelectCallback;
             searchType = type;
         }
@@ -47,33 +44,33 @@ namespace GameEventSystem
                 searchList.Add(entry);
             }
 
-            foreach (var attachedBlackboard in extraBlackboards)
-            {
-                if (attachedBlackboard.uniqueID.Equals(blackboard.uniqueID))
-                {
-                    continue;
-                }
-
-                searchList.Add(new SearchTreeGroupEntry(new GUIContent(attachedBlackboard.name), 1));
-
-                foreach (var variableDefinition in attachedBlackboard.definedVariables)
-                {
-                    if (!variableDefinition.type.IsAssignableFrom(searchType))
-                    {
-                        AddExposedFields(searchList, blackboard, variableDefinition, 2);
-                        continue;
-                    }
-
-                    var entry = new SearchTreeEntry(new GUIContent(variableDefinition.Name));
-                    entry.level = 2;
-                    entry.userData = new VariableSelection()
-                    {
-                        blackboard = attachedBlackboard,
-                        variable = variableDefinition
-                    };
-                    searchList.Add(entry);
-                }
-            }
+            // foreach (var attachedBlackboard in extraBlackboards)
+            // {
+            //     if (attachedBlackboard.uniqueID.Equals(blackboard.uniqueID))
+            //     {
+            //         continue;
+            //     }
+            //
+            //     searchList.Add(new SearchTreeGroupEntry(new GUIContent(attachedBlackboard.name), 1));
+            //
+            //     foreach (var variableDefinition in attachedBlackboard.definedVariables)
+            //     {
+            //         if (!variableDefinition.type.IsAssignableFrom(searchType))
+            //         {
+            //             AddExposedFields(searchList, blackboard, variableDefinition, 2);
+            //             continue;
+            //         }
+            //
+            //         var entry = new SearchTreeEntry(new GUIContent(variableDefinition.Name));
+            //         entry.level = 2;
+            //         entry.userData = new VariableSelection()
+            //         {
+            //             blackboard = attachedBlackboard,
+            //             variable = variableDefinition
+            //         };
+            //         searchList.Add(entry);
+            //     }
+            // }
 
             return searchList;
         }

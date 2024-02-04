@@ -2,10 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using UnityEditor.UIElements;
 using UnityEngine;
 using Object = UnityEngine.Object;
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine.UIElements;
 #endif
 
 namespace GameEventSystem
@@ -24,15 +27,11 @@ namespace GameEventSystem
 
         public VariableDefinition AddVariable(Type type)
         {
-            //VariableDefinition variable = ScriptableObject.CreateInstance(type) as VariableDefinition;
             VariableDefinition variable = Activator.CreateInstance(type) as VariableDefinition;
             variable.Name = $"new{variable.type.Name}";
             
             variable.GenerateId();
             definedVariables.Add(variable);
-            
-            // AssetDatabase.AddObjectToAsset(variable, this);
-            // AssetDatabase.SaveAssets();
 
             return variable;
         }
@@ -77,7 +76,7 @@ namespace GameEventSystem
 
         private static Dictionary<string, AssetBlackboard> blackboardLookup = new Dictionary<string, AssetBlackboard>();
 
-        public static IBlackboard GetBlackboard(string uid)
+        public static AssetBlackboard GetBlackboard(string uid)
         {
 #if UNITY_EDITOR
             if (!blackboardLookup.ContainsKey(uid))
@@ -106,7 +105,8 @@ namespace GameEventSystem
                 return;
             }
 
-            blackboardLookup.Add(blackboard.uniqueID, blackboard);
+            blackboardLookup.Add(blackboard.uniqueID, null); // prevent instantiate trying to re add and creating loop
+            blackboardLookup[blackboard.uniqueID] = Instantiate(blackboard);
         }
 
         private static void DeregisterBlackboard(AssetBlackboard blackboard)
@@ -125,6 +125,59 @@ namespace GameEventSystem
         }
 
 #if UNITY_EDITOR
+        public VisualElement CreatePropertyField(VariableReference variableReference)
+        {
+            try
+            {
+                variableReference.ResolveRef(this);
+
+                if (variableReference.variableDefinition == null)
+                {
+                    throw new Exception("Blackboard does not contain this reference");
+                }
+                
+                return BlackboardFieldUtil.GetFieldForParameter(this, variableReference.variableDefinition);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            return new Label("Could not find field info.");
+        }
+
+        public static BaseField<T> GetPropertyField<T, TU>()
+        {
+            Debug.Log($"Get: {typeof(T)} : {typeof(TU)}");
+            return Activator.CreateInstance(typeof(TU)) as BaseField<T>;
+        }
+
+        public string GetBindingPath(VariableDefinition property)
+        {
+            string bindingPath = string.Empty;
+            try
+            {
+                var serializedObject = new SerializedObject(this);
+                var bindObj = serializedObject.FindProperty("_definedVariables");
+
+                for (int i = 0; i < bindObj.arraySize; i++)
+                {
+                    var nextElement = bindObj.GetArrayElementAtIndex(i);
+                    string id = nextElement.FindPropertyRelative("uniqueId").stringValue;
+                    if (id.Equals(property.uniqueId))
+                    {
+                        var valueElement = nextElement.FindPropertyRelative("_value");
+                        bindingPath = valueElement.propertyPath;
+                        break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+
+            return bindingPath;
+        }
         public static List<AssetBlackboard> GetAllBlackboards()
         {
             List<AssetBlackboard> allBlackboards = new List<AssetBlackboard>();
