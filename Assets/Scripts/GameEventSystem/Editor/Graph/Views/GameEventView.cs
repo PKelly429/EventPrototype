@@ -28,6 +28,8 @@ namespace GameEventSystem.Editor
         private List<GameEventNodeView> _graphNodes;
         private Dictionary<string, GameEventNodeView> _nodeDictionary;
         private Dictionary<Edge, GameEventConnection> _connectionDictionary;
+        private Dictionary<GameEventConnection, Edge> _edgeDictionary;
+        private Dictionary<GameEventNodeView, GameEventConnection> _nodeInputConnections; // we keep track of these to remove custom ports
 
         private bool _reloadView;
 
@@ -60,6 +62,7 @@ namespace GameEventSystem.Editor
             _graphNodes = new List<GameEventNodeView>();
             _nodeDictionary = new Dictionary<string, GameEventNodeView>();
             _connectionDictionary = new Dictionary<Edge, GameEventConnection>();
+            _edgeDictionary = new Dictionary<GameEventConnection, Edge>();
             
             graphViewChanged += OnGraphViewChanged;
             Undo.undoRedoPerformed += ReloadView;
@@ -220,6 +223,7 @@ namespace GameEventSystem.Editor
             parentNodeView.AddConnection(connection);
 
             _connectionDictionary.Add(edge, connection);
+            _edgeDictionary.Add(connection, edge);
         }
 
         private void DrawNodes()
@@ -297,6 +301,7 @@ namespace GameEventSystem.Editor
                 RemoveElement(allEdges[i]);
             }
             _connectionDictionary.Clear();
+            _edgeDictionary.Clear();
         }
 
         private void DeleteNode(GameEventNodeView nodeView)
@@ -306,6 +311,22 @@ namespace GameEventSystem.Editor
                 _reloadView = true;
                 return;
             }
+            
+            // Unity does not automatically remove connections that are not in it's default input/output ports
+            _gameEvent.nodes.ForEach(n =>
+            {
+                for (int i = n.connections.Count-1; i >= 0; i--)
+                {
+                    if (n.connections[i].outputNodeId.Equals(nodeView.Id) || n.connections[i].inputNodeId.Equals(nodeView.Id))
+                    {
+                        if (_edgeDictionary.ContainsKey(n.connections[i]))
+                        {
+                            RemoveElement(_edgeDictionary[n.connections[i]]);
+                        }
+                    }
+                }
+            });
+            
             _gameEvent.RemoveNode(nodeView.Node);
             _graphNodes.Remove(nodeView);
             _nodeDictionary.Remove(nodeView.Id);
@@ -328,6 +349,7 @@ namespace GameEventSystem.Editor
 
                 AddElement(edge);
                 _connectionDictionary.Add(edge, connection);
+                _edgeDictionary.Add(connection, edge);
             }
             catch (Exception e)
             {
@@ -345,6 +367,7 @@ namespace GameEventSystem.Editor
             GetNode(connection.inputNodeId)?.RemoveConnection(connection);
             
             _connectionDictionary.Remove(edge);
+            _edgeDictionary.Remove(connection);
         }
 
         private GameEventNodeView GetNode(string nodeId)
@@ -385,27 +408,8 @@ namespace GameEventSystem.Editor
             #endregion
 
             #region Add Condition Search Menu
-            // evt.menu.AppendAction("Add Condition Node", eventAction =>
-            // {
-            //     var provider = new ConditionNodeSearchProvider((type) =>
-            //     {
-            //         var windowMousePosition =
-            //             this.ChangeCoordinatesTo(this, eventAction.eventInfo.mousePosition - _window.position.position);
-            //         var mousePosition = contentViewContainer.WorldToLocal(windowMousePosition);
-            //
-            //
-            //         AddNode(type, mousePosition);
-            //     });
-            //     SearchWindow.Open(new SearchWindowContext(eventAction.eventInfo.mousePosition),
-            //         provider);
-            // });
-            evt.menu.AppendAction("Add Condition Node", eventAction =>
-            {
-                var windowMousePosition =
-                    this.ChangeCoordinatesTo(this, eventAction.eventInfo.mousePosition - _window.position.position);
-                var mousePosition = contentViewContainer.WorldToLocal(windowMousePosition);
-                AddNode(typeof(ConditionNode), mousePosition);
-            });
+            evt.menu.AppendAction("Add Condition Node", AddNodeToBuildMenu(typeof(ConditionNode)));
+            evt.menu.AppendAction("OR Node", AddNodeToBuildMenu(typeof(ORNode))); //TODO: Add decorator tab
             #endregion
             
             #region Add Effect Search Menu
@@ -424,6 +428,17 @@ namespace GameEventSystem.Editor
                     provider);
             });
             #endregion
+        }
+
+        private Action<DropdownMenuAction> AddNodeToBuildMenu(Type type)
+        {
+            return eventAction =>
+            {
+                var windowMousePosition =
+                    this.ChangeCoordinatesTo(this, eventAction.eventInfo.mousePosition - _window.position.position);
+                var mousePosition = contentViewContainer.WorldToLocal(windowMousePosition);
+                AddNode(type, mousePosition);
+            };
         }
     }
 }

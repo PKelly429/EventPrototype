@@ -127,7 +127,7 @@
     display: none;
 }
 
-:hover > #script-button {
+#script-button:hover {
     background-color: rgb(245, 246, 250);
     border-left-color: rgb(220, 221, 225);
     border-right-color: rgb(220, 221, 225);
@@ -195,10 +195,10 @@
     -unity-background-scale-mode: scale-to-fit;
     background-color: rgba(0, 0, 0, 0);
     -unity-background-image-tint-color: rgb(220, 221, 225);
-    -unity-slice-left: 0;
-    -unity-slice-top: 1;
-    -unity-slice-right: 0;
-    -unity-slice-bottom: 1;
+    -unity-slice-left: 1;
+    -unity-slice-top: 2;
+    -unity-slice-right: 1;
+    -unity-slice-bottom: 2;
     font-size: 14px;
     border-left-color: rgba(0, 0, 0, 0);
     border-right-color: rgba(0, 0, 0, 0);
@@ -252,7 +252,7 @@
 }
 
 .choice-window #add-node-button {
-    -unity-background-image-tint-color: rgba(225, 177, 44, 255);
+    -unity-background-image-tint-color: rgb(225, 177, 44);
     background-color: rgba(0, 0, 0, 0);
     border-left-color: rgba(0, 0, 0, 0);
     border-right-color: rgba(0, 0, 0, 0);
@@ -261,9 +261,61 @@
 }
 
 #add-node-button:hover {
-    border-left-color: rgba(72, 126, 176, 255);
-    border-right-color: rgba(72, 126, 176, 255);
-    border-top-color: rgba(72, 126, 176, 255);
-    border-bottom-color: rgba(72, 126, 176, 255);
-    background-color: rgba(47, 54, 64, 255);
+    border-left-color: rgb(72, 126, 176);
+    border-right-color: rgb(72, 126, 176);
+    border-top-color: rgb(72, 126, 176);
+    border-bottom-color: rgb(72, 126, 176);
+    background-color: rgb(47, 54, 64);
+}
+
+#node-function-button {
+    background-color: rgba(0, 0, 0, 0);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    visibility: hidden;
+    -unity-background-image-tint-color: rgb(220, 221, 225);
+    background-image: url('project://database/Assets/Scripts/GameEventSystem/Icons/StartEventIcon.png?fileID=2800000&guid=0c2d239d19789c34fb41171cf7ec9299&type=3#StartEventIcon');
+}
+
+.root-node #node-function-button {
+    visibility: visible;
+    background-image: url('project://database/Assets/Scripts/GameEventSystem/Icons/StartEventIcon.png?fileID=2800000&guid=0c2d239d19789c34fb41171cf7ec9299&type=3#StartEventIcon');
+}
+
+.root-node #node-function-button:hover {
+    -unity-background-image-tint-color: rgb(68, 189, 50);
+}
+
+.condition-node #node-function-button {
+    visibility: visible;
+    background-image: url('project://database/Assets/Scripts/GameEventSystem/Icons/noun-inspect-2445116-FFFFFF.png?fileID=2800000&guid=f6e472d31f9efac47b148cc7f090c7ee&type=3#noun-inspect-2445116-FFFFFF');
+}
+
+.condition-node #node-function-button:hover {
+    -unity-background-image-tint-color: rgb(194, 54, 22);
+}
+
+.unity-property-field__label {
+    min-width: 80px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    align-items: flex-start;
+}
+
+.unity-base-field__aligned {
+    max-width: 200px;
+    align-items: flex-end;
+    flex-grow: 0;
+    flex-shrink: 1;
+}
+
+.unity-property-field__input {
+    align-items: flex-end;
+    flex-shrink: 1;
+}
+
+.unity-toggle__input {
+    flex-direction: row-reverse;
 }

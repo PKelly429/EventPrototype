@@ -105,15 +105,8 @@ namespace GameEventSystem
             }
 
             cache = FindAllClassesOfType<T>();
-            cache = cache.OrderBy(type =>
-            {
-                if (type == null)
-                {
-                    return -999;
-                }
-
-                return type.GetCustomAttribute<AddTypeMenuAttribute>()?.Order ?? 0;
-            });
+            cache = cache.OrderBy(type => type.GetCustomAttribute<AddTypeMenuAttribute>()?.GetTypeNameWithoutPath() ?? string.Empty, StringComparer.InvariantCulture)
+                         .ThenBy(type => type.GetCustomAttribute<AddTypeMenuAttribute>()?.Order ?? 0);
 
             return cache;
         }

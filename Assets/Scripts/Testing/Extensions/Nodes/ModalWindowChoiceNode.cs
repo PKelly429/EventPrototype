@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GameEventSystem
 {
-    [NodeInfo("Choice Option")]
+    [NodeInfo("Choice Option", "CHOICE")]
     [NodeDescription("Adds an option to a choice window")]
     [NodeConnectionInput(PortTypeDefinitions.PortTypes.Choice)]
     [NodeConnectionOutput(PortTypeDefinitions.PortTypes.Condition)]

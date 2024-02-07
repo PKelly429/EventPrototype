@@ -10,7 +10,7 @@ namespace GameEventSystem
     public class CheckBoolCondition : AbstractCondition
     {
         public BoolParameter testParameter;
-        public override bool CheckCondition()
+        public override bool CheckCondition(GameEvent parentEvent)
         {
             return testParameter.GetValue();
         }

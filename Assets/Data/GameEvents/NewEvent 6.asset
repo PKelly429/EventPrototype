@@ -1,97 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7660280196865388040
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75deb44c25b455b45b6ac0b264cae313, type: 3}
-  m_Name: ConditionNode
-  m_EditorClassIdentifier: 
-  guid: 2b5ca912320927f4bb249084fcb94c41
-  _position:
-    serializedVersion: 2
-    x: 275.55554
-    y: 0
-    width: 209.77777
-    height: 173.33333
-  blackboard: {fileID: 0}
-  connections: []
-  condition:
-    _redraw: 0
-    condition:
-      rid: 4864220894982832195
-  references:
-    version: 2
-    RefIds:
-    - rid: 4864220894982832195
-      type: {class: CheckBoolCondition, ns: GameEventSystem, asm: Assembly-CSharp}
-      data:
-        testParameter:
-          refId: 
-          name: 
-          propertyName: 
-          _localValue: 0
---- !u!114 &-7151033325074430883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 934cb3cb408765041b69308f62d0c65c, type: 3}
-  m_Name: EmergentEventTrigger
-  m_EditorClassIdentifier: 
-  guid: d94ecdb9a21c36b4a9db2429ae944141
-  _position:
-    serializedVersion: 2
-    x: 0
-    y: -201.77777
-    width: 236.44446
-    height: 106.66666
-  blackboard: {fileID: 0}
-  connections:
-  - guid: 511c0e18-48a4-4632-880d-36db45b6b01c
-    portId: 0
-    inputNodeId: d94ecdb9a21c36b4a9db2429ae944141
-    outputNodeId: fec6bfbe2db37da48a50cbf07b00f9b7
---- !u!114 &-4031311763850684233
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60aeb995ed91caa4b84ff09a5a16989a, type: 3}
-  m_Name: RootNode
-  m_EditorClassIdentifier: 
-  guid: fec6bfbe2db37da48a50cbf07b00f9b7
-  _position:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
-  blackboard: {fileID: 0}
-  connections:
-  - guid: fbfa663b-4750-4d59-95d5-0b4ef865cdee
-    portId: 0
-    inputNodeId: fec6bfbe2db37da48a50cbf07b00f9b7
-    outputNodeId: 1e99eb7c4197ea043b4823ecab1b447c
-  - guid: 702802c0-7e4c-4e02-ba01-12267588f903
-    portId: 1
-    inputNodeId: fec6bfbe2db37da48a50cbf07b00f9b7
-    outputNodeId: 2b5ca912320927f4bb249084fcb94c41
-  activeByDefault: 1
-  canRepeat: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,15 +13,15 @@ MonoBehaviour:
   m_Name: NewEvent 6
   m_EditorClassIdentifier: 
   nodes:
-  - {fileID: -4031311763850684233}
-  - {fileID: -7151033325074430883}
-  - {fileID: 2187194742482184144}
-  - {fileID: -7660280196865388040}
-  rootNode: {fileID: -4031311763850684233}
+  - {fileID: 6513073893606006706}
+  - {fileID: 4215835916674882492}
+  - {fileID: 8685301205828604134}
+  - {fileID: 2566763896422191834}
+  rootNode: {fileID: 6513073893606006706}
   blackboard: {fileID: 0}
   _localBlackboard: {fileID: 0}
-  _uniqueID: e52dce4e569fd7d449d927b1be70b11b
---- !u!114 &2187194742482184144
+  _uniqueID: e381b2a1e769dd34fa3a8cc81823436f
+--- !u!114 &2566763896422191834
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,19 +30,107 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be3da043a51af8d41a4bb4296ec09d7d, type: 3}
-  m_Name: DebugLogNode
+  m_Script: {fileID: 11500000, guid: aaaf7c637d989c84497476393b4e2d74, type: 3}
+  m_Name: OnStartTrigger
   m_EditorClassIdentifier: 
-  guid: 1e99eb7c4197ea043b4823ecab1b447c
+  guid: 172aef1c5ce46bf4b8e7dbe52624531e
+  _position:
+    serializedVersion: 2
+    x: 11.555542
+    y: -207.11111
+    width: 200
+    height: 106.66667
+  blackboard: {fileID: 0}
+  connections:
+  - guid: 2e7907df-c35e-4c1c-8979-e24a5a687a30
+    portId: 0
+    inputNodeId: 172aef1c5ce46bf4b8e7dbe52624531e
+    outputNodeId: a40296a44a160d840a92a363d590766f
+--- !u!114 &4215835916674882492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 664f8562f29535a4f9641f8f68812d1a, type: 3}
+  m_Name: WaitUntilNode
+  m_EditorClassIdentifier: 
+  guid: 77a4a8fe1f3aea54e8ff3788e5f453d6
   _position:
     serializedVersion: 2
     x: 0
-    y: 240
+    y: 238.22223
     width: 200
-    height: 111.111115
+    height: 112.888885
+  blackboard: {fileID: 0}
+  connections:
+  - guid: d9e87dff-abbb-40cd-aa82-3600b3125716
+    portId: 1
+    inputNodeId: 77a4a8fe1f3aea54e8ff3788e5f453d6
+    outputNodeId: b41df1f672ddba840a5dfb1d16baf862
+--- !u!114 &6513073893606006706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60aeb995ed91caa4b84ff09a5a16989a, type: 3}
+  m_Name: RootNode
+  m_EditorClassIdentifier: 
+  guid: a40296a44a160d840a92a363d590766f
+  _position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  blackboard: {fileID: 0}
+  connections:
+  - guid: fcc60efc-cdbf-496b-92fc-abd09a6d9ec3
+    portId: 0
+    inputNodeId: a40296a44a160d840a92a363d590766f
+    outputNodeId: 77a4a8fe1f3aea54e8ff3788e5f453d6
+  activeByDefault: 1
+  canRepeat: 1
+--- !u!114 &8685301205828604134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75deb44c25b455b45b6ac0b264cae313, type: 3}
+  m_Name: ConditionNode
+  m_EditorClassIdentifier: 
+  guid: b41df1f672ddba840a5dfb1d16baf862
+  _position:
+    serializedVersion: 2
+    x: 312.88885
+    y: 238.22223
+    width: 209.77777
+    height: 173.33331
   blackboard: {fileID: 0}
   connections: []
-  text:
-    text: Emergent Event Fired!
-    parameters: []
-    needsRepaint: 0
+  condition:
+    _redraw: 0
+    condition:
+      rid: 4864220922052083714
+  references:
+    version: 2
+    RefIds:
+    - rid: 4864220922052083714
+      type: {class: CheckBoolCondition, ns: GameEventSystem, asm: Assembly-CSharp}
+      data:
+        testParameter:
+          refId: 
+          name: 
+          propertyName: 
+          _localValue: 0

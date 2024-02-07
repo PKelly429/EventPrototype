@@ -65,7 +65,10 @@ namespace GameEventSystem.Editor
             if (description == null) descriptionLabel.visible = false;
             
             Button scriptButton = this.Q<Button>("script-button");
-            scriptButton.clicked += OpenScript;
+            if(scriptButton != null) scriptButton.clicked += OpenScript;
+            
+            Button triggerButton = this.Q<Button>("node-function-button");
+            if(triggerButton != null) triggerButton.clicked += TriggerEventFunction;
 
             string[] menuName = info.GetSplittedMenuName();
             foreach (var menu in menuName)
@@ -134,17 +137,27 @@ namespace GameEventSystem.Editor
             AssetDatabase.OpenAsset(scriptObj);
         }
 
+        public void TriggerEventFunction()
+        {
+            _node.PerformTestGraphFunction();
+        }
+
         private void SetupClassLists()
         {
             AddToClassList("game-event-node");
 
             var nodeType = _node.GetType();
             
+            //TODO: Make this an attribute
             if (typeof(TriggerNode).IsAssignableFrom(nodeType))
             {
                 AddToClassList("trigger-node");
             }
             else if (typeof(ConditionNode).IsAssignableFrom(nodeType))
+            {
+                AddToClassList("condition-node");
+            }
+            else if (typeof(ORNode).IsAssignableFrom(nodeType))
             {
                 AddToClassList("condition-node");
             }

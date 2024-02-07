@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GameEventSystem
 {
-    [NodeInfo("IF THEN ELSE", "")]
+    [NodeInfo("IF THEN ELSE", "FLOW")]
     [NodeDescription("Selects output depending on condition")]
     [NodeConnectionOutput(PortTypeDefinitions.PortTypes.Flow, 2)]
     [NodeConnectionOutput(PortTypeDefinitions.PortTypes.Condition)]

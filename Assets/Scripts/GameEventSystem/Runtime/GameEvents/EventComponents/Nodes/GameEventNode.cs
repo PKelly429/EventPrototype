@@ -36,6 +36,7 @@ namespace GameEventSystem
         
         [NonSerialized] public State state = State.Idle;
         [NonSerialized] protected GameEvent _runtimeGameEvent;
+        [NonSerialized] private bool _isSubscribedToEventRunner;
         
         public virtual bool IsRootNode => false;
         public virtual bool IsTriggerNode => false;
@@ -46,23 +47,33 @@ namespace GameEventSystem
 
         public void Setup(GameEvent parent)
         {
-            _runtimeGameEvent = parent;
-            foreach (var connection in connections)
+            try
             {
-                var nodeToAdd = parent.GetNode(connection.outputNodeId);
-                if (nodeToAdd.IsConditionNode)
+                _runtimeGameEvent = parent;
+                foreach (var connection in connections)
                 {
-                    conditionNodes.Add(nodeToAdd);
+                    var nodeToAdd = parent.GetNode(connection.outputNodeId);
+                    if (nodeToAdd.IsConditionNode)
+                    {
+                        conditionNodes.Add(nodeToAdd);
+                    }
+                    else
+                    {
+                        children.Add(nodeToAdd);
+                    }
                 }
-                else
-                {
-                    children.Add(nodeToAdd);
-                }
-            }
 
-            SortChildren();
-            
-            OnSetup();
+                SortChildren();
+
+                OnSetup();
+            }
+            catch (Exception e)
+            {
+                #if DEBUG
+                Debug.LogException(e);
+                Debug.Log($"Caught exception while setting up event: {name}");
+                #endif
+            }
         }
 
         public virtual bool CheckConditions()
@@ -103,12 +114,37 @@ namespace GameEventSystem
 
             state = OnUpdate();
             
+            if (state == State.Running)
+            {
+                SubscribeToEventRunner();
+            }
+            else
+            {
+                UnsubscribeToEventRunner();
+            }
+            
             if (state != State.Running) 
             {
                 OnStop();
             }
             
             return state;
+        }
+
+        protected void SubscribeToEventRunner()
+        {
+            if (_isSubscribedToEventRunner) return;
+            
+            _isSubscribedToEventRunner = true;
+            EventManager.RegisterToEventRunner(this);
+        }
+        
+        protected void UnsubscribeToEventRunner()
+        {
+            if (!_isSubscribedToEventRunner) return;
+            
+            _isSubscribedToEventRunner = false;
+            EventManager.DeregisterToEventRunner(this);
         }
 
         protected virtual void OnStart() { }
@@ -126,6 +162,7 @@ namespace GameEventSystem
         protected abstract State OnUpdate();
 
         #region Graph
+        public virtual void PerformTestGraphFunction() { }
         public void DrawInspector(VisualElement contentContainer)
         {
             SerializedObject obj = new SerializedObject(this);
@@ -163,7 +200,7 @@ namespace GameEventSystem
 
 #if UNITY_EDITOR
             EditorUtility.SetDirty(this);
-            
+
             RequestRedraw();
 #endif
         }
@@ -180,6 +217,11 @@ namespace GameEventSystem
                 _contentContainer.Clear();
                 DrawContent(_contentContainer);
             }
+        }
+
+        public string GetDebugName()
+        {
+            return $"{_runtimeGameEvent.name}/{name}";
         }
 #endif
         public virtual void DrawContent(VisualElement contentContainer)

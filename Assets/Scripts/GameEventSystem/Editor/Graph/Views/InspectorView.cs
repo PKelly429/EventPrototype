@@ -8,37 +8,28 @@ using UnityEngine.UIElements;
 
 namespace GameEventSystem.Editor
 {
-    public class InspectorView : VisualElement
+    public class InspectorView : ScrollView
     {
         public new class UxmlFactory : UxmlFactory<InspectorView, VisualElement.UxmlTraits> { }
 
         private GameEventNodeView _selectedNode;
-        private UnityEditor.Editor _editor;
+
+        private VisualElement _contentContainer;
 
         public InspectorView()
         {
+            _contentContainer = this.Q<VisualElement>("unity-content-container");
         }
 
         public void UpdateSelection(GameEventNodeView nodeView)
         {
             Clear();
-            UnityEngine.Object.DestroyImmediate(_editor);
+
 
             _selectedNode = nodeView;
             if (nodeView == null || nodeView.Node == null) return;
 
-            nodeView.Node.DrawInspector(this);
-            // _editor = UnityEditor.Editor.CreateEditor(nodeView.Node);
-            // IMGUIContainer container = new IMGUIContainer(() =>
-            // {
-            //     if (_editor.target == null)
-            //     {
-            //         UpdateSelection(null);
-            //         return;
-            //     }
-            //     _editor.OnInspectorGUI();
-            // });
-            //Add(container);
+            nodeView.Node.DrawInspector(_contentContainer);
         }
 
         public void HandleNodeUnselected(GameEventNodeView nodeView)

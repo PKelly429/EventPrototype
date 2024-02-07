@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace GameEventSystem.Editor
 {
@@ -12,6 +14,15 @@ namespace GameEventSystem.Editor
             GUIContent label)
         {
             return EditorGUI.GetPropertyHeight(property, label, true);
+        }
+
+        public override VisualElement CreatePropertyGUI(SerializedProperty property)
+        {
+            VisualElement container = new VisualElement();
+            PropertyField field = new PropertyField(property);
+            field.SetEnabled(false);
+            container.Add(field);
+            return container;
         }
 
         public override void OnGUI(Rect position,

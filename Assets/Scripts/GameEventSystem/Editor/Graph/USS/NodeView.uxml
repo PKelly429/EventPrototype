@@ -8,7 +8,7 @@
                 <ui:VisualElement name="title" picking-mode="Ignore" style="flex-direction: row;">
                     <ui:Button text="#" display-tooltip-when-elided="true" name="script-button" style="color: rgb(50, 135, 37);" />
                     <ui:Label name="title-label" text="Node" picking-mode="Ignore" class="unity-text-element unity-label" style="align-items: stretch; flex-grow: 1;" />
-                    <ui:VisualElement name="padding" style="width: 20px;" />
+                    <ui:Button text="#" display-tooltip-when-elided="true" name="node-function-button" style="color: rgba(50, 135, 37, 0);" />
                     <ui:VisualElement name="title-button-container">
                         <ui:VisualElement name="collapse-button">
                             <ui:VisualElement name="icon" />

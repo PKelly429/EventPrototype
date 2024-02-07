@@ -13,9 +13,10 @@ public class ModalWindowOption : Selectable, IPointerClickHandler, ISubmitHandle
 
     private Action optionClickedCallback;
 
-    public void SetChoice(string text, Action callback)
+    public void SetChoice(string text, bool active, Action callback)
     {
         optionText.text = text;
+        interactable = active;
         optionClickedCallback = callback;
     }
     

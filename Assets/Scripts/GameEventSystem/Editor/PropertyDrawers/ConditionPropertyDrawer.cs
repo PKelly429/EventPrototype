@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -49,23 +50,37 @@ namespace GameEventSystem.Editor
 
             if (property.FindPropertyRelative("condition").managedReferenceValue == null)
             {
-                Label label = new Label("Not Set");
-                label.style.flexGrow = 1;
-                label.style.marginLeft = 4;
-                buttonContainer.Add(label);
+                AddLabel(buttonContainer, "Not Set");
+            }
+            else
+            {
+                var conditionType = property.FindPropertyRelative("condition").managedReferenceValue.GetType();
+                var menuAttribute = conditionType.GetCustomAttribute<AddTypeMenuAttribute>();
+                string name = menuAttribute == null ? conditionType.Name : menuAttribute.MenuName;
+                AddLabel(buttonContainer, name);
             }
 
 
             container.Add(buttonContainer);
             PropertyField conditionField = new PropertyField(property.FindPropertyRelative("condition"));
-            if (property.FindPropertyRelative("condition").managedReferenceValue != null)
-            {
-                conditionField.label = $"{property.FindPropertyRelative("condition").managedReferenceValue.GetType().Name}";
-            }
+            // if (property.FindPropertyRelative("condition").managedReferenceValue != null)
+            // {
+            //     conditionField.label = $"{property.FindPropertyRelative("condition").managedReferenceValue.GetType().Name}";
+            // }
 
             container.Add(conditionField);
 
             return container;
+        }
+
+        private void AddLabel(VisualElement container, string text)
+        {
+            Label label = new Label(text);
+            label.style.unityFontStyleAndWeight = FontStyle.Bold;
+            label.style.fontSize = 14;
+            label.style.flexGrow = 1;
+            label.style.marginLeft = 4;
+            container.Add(label);
         }
         
     }

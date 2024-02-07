@@ -33,7 +33,7 @@ public class ModalWindow : MonoBehaviour
             options[i].gameObject.SetActive(showOption);
             if (showOption)
             {
-                options[i].SetChoice(settings.optionSettings[i].text, settings.optionSettings[i].callback);
+                options[i].SetChoice(settings.optionSettings[i].text, settings.optionSettings[i].active, settings.optionSettings[i].callback);
             }
         }
     }
@@ -60,5 +60,6 @@ public struct ModalWindowSettings
 public struct ModalWindowOptionSettings
 {
     public string text;
+    public bool active;
     public Action callback;
 }

@@ -14,13 +14,18 @@ namespace GameEventSystem
         //Settings
         public float AverageEmergentEventDelay = 300;
         
+        public Action OnEventLoadingFinished;
         public List<GameEvent> gameEvents = new List<GameEvent>();
 
         private static EventManager _eventManager;
         private List<GameEvent> _emergentEvents = new List<GameEvent>();
         private HashSet<string> _triggeredEventIds = new HashSet<string>(); // used to test if an event has previously been triggered
         private HashSet<string> _completedEventIds = new HashSet<string>(); // events that have finished and cannot repeat
+
         private IEnumerator _eventScheduler;
+        private NodeRunner _nodeRunner; // when a node halts, the node runner will continue to update it
+
+        private bool _eventsFinishedLoading;
 
         public static void RegisterEmergentEvent(GameEvent gameEvent)
         {
@@ -33,17 +38,45 @@ namespace GameEventSystem
             if (_eventManager == null) return;
             _eventManager._emergentEvents.Remove(gameEvent);
         }
+        
+        public static void SetEventTriggered(GameEvent gameEvent)
+        {
+            if (_eventManager == null) return;
+            if (gameEvent == null) return;
+            _eventManager._triggeredEventIds.Add(gameEvent.UniqueId);
+        }
+        
+        public static void SetEventComplete(GameEvent gameEvent)
+        {
+            if (_eventManager == null) return;
+            if (gameEvent == null) return;
+            _eventManager._completedEventIds.Add(gameEvent.UniqueId);
+        }
 
         public static bool HasEventTriggered(GameEvent gameEvent)
         {
             if (_eventManager == null) return false;
+            if (gameEvent == null) return false;
             return _eventManager._triggeredEventIds.Contains(gameEvent.UniqueId);
         }
         
         public static bool IsEventComplete(GameEvent gameEvent)
         {
             if (_eventManager == null) return false;
+            if (gameEvent == null) return false;
             return _eventManager._completedEventIds.Contains(gameEvent.UniqueId);
+        }
+
+        public static void RegisterToEventRunner(GameEventNode node)
+        {
+            if (_eventManager == null) return;
+            _eventManager._nodeRunner.AddNodeToRunningNodes(node);
+        }
+        
+        public static void DeregisterToEventRunner(GameEventNode node)
+        {
+            if (_eventManager == null) return;
+            _eventManager._nodeRunner.RemoveNodeFromRunningNodes(node);
         }
         
         #region Event Scheduler
@@ -97,11 +130,12 @@ namespace GameEventSystem
             }
         }
         #endregion
-        
+
         #region Unity Events
         private void Start()
         {
             _eventManager = this;
+            _nodeRunner = gameObject.AddComponent<NodeRunner>();
             StartScheduler();
             LoadEvents();
         }
@@ -109,6 +143,7 @@ namespace GameEventSystem
         {
             try
             {
+                if(_eventScheduler == null) _eventScheduler = EventScheduler();
                 _eventScheduler.MoveNext();
             }
             catch (Exception e)
@@ -136,7 +171,8 @@ namespace GameEventSystem
 
         private void AllGameEventsLoaded(AsyncOperationHandle<IList<GameEvent>> obj)
         {
-            
+            _eventsFinishedLoading = true;
+            OnEventLoadingFinished?.Invoke();
         }
 
         private void LoadGameEvent(GameEvent gameEvent)

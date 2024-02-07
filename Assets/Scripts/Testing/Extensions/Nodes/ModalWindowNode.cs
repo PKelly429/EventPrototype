@@ -4,7 +4,7 @@ using System.Linq;
 using GameEventSystem;
 using UnityEngine;
 
-[NodeInfo("Choice Window")]
+[NodeInfo("Choice Window", "CHOICE", -1)]
 [NodeDescription("Show a choice dialog")]
 [AddNodeButton(typeof(ModalWindowChoiceNode))]
 [NodeConnectionOutput(PortTypeDefinitions.PortTypes.Choice)]
@@ -44,6 +44,7 @@ public class ModalWindowNode : EffectNode
             result[i] = new ModalWindowOptionSettings()
             {
                 text = toSelect.text.GetValue(),
+                active = toSelect.CheckConditions(),
                 callback = () =>
                 {
                     SelectNode(toSelect);

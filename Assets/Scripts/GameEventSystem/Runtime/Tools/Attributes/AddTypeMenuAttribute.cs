@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 namespace GameEventSystem
 {
@@ -36,6 +37,17 @@ namespace GameEventSystem
         {
             string[] splittedDisplayName = GetSplittedMenuName();
             return (splittedDisplayName.Length != 0) ? splittedDisplayName[splittedDisplayName.Length - 1] : null;
+        }
+        
+        public string GetMenuNameWithoutFinalItem()
+        {
+            string[] splittedDisplayName = GetSplittedMenuName();
+            StringBuilder result = new StringBuilder();
+            for(int i=0; i<splittedDisplayName.Length-1; i++)
+            {
+                result.Append(splittedDisplayName[i]);
+            }
+            return result.ToString();
         }
 
     }

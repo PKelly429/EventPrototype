@@ -21,5 +21,21 @@ namespace GameEventSystem
         {
             return State.Success;
         }
+
+        public void FireEvent()
+        {
+            if (_runtimeGameEvent != null)
+            {
+                _runtimeGameEvent.FireEvent();
+            }
+        }
+        
+        public override void PerformTestGraphFunction()
+        {
+#if DEBUG
+            Debug.LogError("Must be in play mode and selecting a runtime event.");
+#endif
+            FireEvent();
+        }
     }
 }

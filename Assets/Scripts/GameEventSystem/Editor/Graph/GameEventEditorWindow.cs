@@ -14,6 +14,8 @@ namespace GameEventSystem.Editor
 {
     public class GameEventEditorWindow : EditorWindow
     {
+        private static GameEventEditorWindow _instance;
+        
         [SerializeField] private GameEvent _currentEvent;
         [SerializeField] private SerializedObject _serializedObject;
         [SerializeField] private GameEventView _currentView;
@@ -30,20 +32,24 @@ namespace GameEventSystem.Editor
 
         public static void Open(GameEvent target)
         {
+            if (_instance != null)
+            {
+                _instance.Focus();
+                _instance.Load(target);
+            }
             GameEventEditorWindow[] windows = Resources.FindObjectsOfTypeAll<GameEventEditorWindow>();
             foreach (var window in windows)
             {
-                if (window.CurrentEvent == target)
-                {
-                    window.Focus();
-                    return;
-                }
+                if(window == null) continue;
+                _instance = window;
+                _instance.Focus();
+                _instance.Load(target);
+                return;
             }
 
-            GameEventEditorWindow newWindow =
-                CreateWindow<GameEventEditorWindow>(typeof(GameEventEditorWindow), typeof(SceneView));
-            newWindow.titleContent = new GUIContent($"{target.name}", EditorGUIUtility.ObjectContent(null, typeof(GameEvent)).image);
-            newWindow._currentEvent = target;
+            _instance = CreateWindow<GameEventEditorWindow>(typeof(GameEventEditorWindow), typeof(SceneView));
+            _instance.titleContent = new GUIContent($"{target.name}", EditorGUIUtility.ObjectContent(null, typeof(GameEvent)).image);
+            _instance._currentEvent = target;
         }
 
         public void CreateGUI()

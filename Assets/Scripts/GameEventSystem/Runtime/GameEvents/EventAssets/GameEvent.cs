@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace GameEventSystem
 {
@@ -22,6 +24,7 @@ namespace GameEventSystem
         public List<GameEventNode> nodes = new List<GameEventNode>();
         public RootNode rootNode;
         [NonSerialized] private EventState _state;
+        public float startTime { get; private set; }
 
         public AssetBlackboard blackboard;
         [SerializeField] private AssetBlackboard _localBlackboard;
@@ -33,7 +36,7 @@ namespace GameEventSystem
         public bool CanEventRepeat => rootNode.canRepeat;
 
         [NonSerialized] private Dictionary<string, GameEventNode> nodeLookup = new Dictionary<string, GameEventNode>();
-        
+
         private bool _isInitialising;
         private bool _delayedTrigger;
 
@@ -67,6 +70,11 @@ namespace GameEventSystem
             if (_state == state) return;
             _state = state;
 
+            if (_state == EventState.Running)
+            {
+                startTime = Time.time;
+                EventManager.SetEventTriggered(this);
+            }
             bool subscribeToEvents = _state == EventState.Ready;
             if (subscribeToEvents == _triggersSubscribed) return;
 
@@ -134,12 +142,15 @@ namespace GameEventSystem
             nodeLookup.Add(node.Id, node);
         }
 
-        public void Bind() 
+        public void Bind()
         {
             foreach (var node in nodes)
             {
                 node.BindBlackboard(blackboard);
             }
+#if UNITY_EDITOR
+            EditorUtility.SetDirty(this);
+#endif
         }
 
         public GameEventNode GetNode(string id)

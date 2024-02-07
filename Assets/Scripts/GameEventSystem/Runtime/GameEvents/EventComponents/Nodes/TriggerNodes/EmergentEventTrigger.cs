@@ -15,6 +15,7 @@ namespace GameEventSystem
 
         protected override void RemoveListener()
         {
+            state = State.Success;
             EventManager.RemoveEmergentEvent(_runtimeGameEvent);
         }
     }

@@ -14,7 +14,7 @@ namespace GameEventSystem
         public StringParameter[] parameters;
         private object[] values;
 
-        [SerializeField] private bool needsRepaint;
+        [SerializeField] private bool needsRepaint; //used by property drawer to request a redraw
         
         public string GetValue()
         {

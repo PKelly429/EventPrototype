@@ -9,7 +9,7 @@ using UnityEditor.UIElements;
 
 namespace GameEventSystem
 {
-    [NodeInfo("Log", "DEBUG", 999)]
+    [NodeInfo("Log", "z_DEBUG", 999)]
     [NodeDescription("Logs a message to the console")]
     public class DebugLogNode : EffectNode
     {

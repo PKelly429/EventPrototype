@@ -1,25 +1,25 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameEventSystem
 {
-    [NodeInfo("Condition")]
+    [NodeInfo("OR")]
     [NodeConnectionInput(PortTypeDefinitions.PortTypes.Condition, 1)]
-    [NodeConnectionOutput(PortTypeDefinitions.PortTypes.Condition, 0)]
-    public class ConditionNode : GameEventNode
+    [NodeConnectionOutput(PortTypeDefinitions.PortTypes.Condition, 1)]
+    public class ORNode : GameEventNode
     {
-        public override bool IsConditionNode => true;
-
-        [DisplayField] public Condition condition;
-        
         public override bool CheckConditions()
         {
-            bool result = condition == null || condition.CheckCondition(_runtimeGameEvent);
-            state = result ? State.Success : State.Failure;
+            foreach (var condition in conditionNodes)
+            {
+                if (condition.CheckConditions())
+                {
+                    return true;
+                }
+            }
             
-            return result;
+            return false;
         }
         
         protected override State OnUpdate()
@@ -30,7 +30,8 @@ namespace GameEventSystem
             }
             return State.Failure;
         }
-        
+
+
         public override void PerformTestGraphFunction()
         {
 #if DEBUG
@@ -40,7 +41,13 @@ namespace GameEventSystem
                 return;
             }
 #endif
-            Debug.Log($"CheckCondition: {CheckConditions()}");
+            bool success = CheckConditions();
+            if (success)
+            {
+                state = State.Success;
+            }
+            state = State.Failure;
+            Debug.Log($"CheckCondition: {success}");
         }
     }
 }
