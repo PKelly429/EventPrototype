@@ -1,0 +1,333 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8595566918623400325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75deb44c25b455b45b6ac0b264cae313, type: 3}
+  m_Name: Condition
+  m_EditorClassIdentifier: 
+  guid: 5c608452e954457458c8b768f4d18425
+  _position:
+    serializedVersion: 2
+    x: 344.88885
+    y: 199.11111
+    width: 200
+    height: 108.44443
+  blackboard: {fileID: 2007490423608439590}
+  connections: []
+  condition:
+    _redraw: 0
+    condition:
+      rid: 4864220894982832190
+  references:
+    version: 2
+    RefIds:
+    - rid: 4864220894982832190
+      type: {class: CheckBoolCondition, ns: GameEventSystem, asm: Assembly-CSharp}
+      data:
+        testParameter:
+          refId: 7aa4a5210ec0a474f9729891d5b46117
+          name: newCrew.Alive
+          propertyName: Alive
+          _localValue: 0
+--- !u!114 &-3630605115069211175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c4c43567d5678c4494688e71e613647, type: 3}
+  m_Name: Choice Option
+  m_EditorClassIdentifier: 
+  guid: e0aebc0dd52470d40ab033d8cd9b6ec2
+  _position:
+    serializedVersion: 2
+    x: -56.000015
+    y: 674.6667
+    width: 221.33333
+    height: 112.888855
+  blackboard: {fileID: 2007490423608439590}
+  connections: []
+  text:
+    text: choice 2
+    parameters: []
+    needsRepaint: 0
+--- !u!114 &-2376311294750926747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3da043a51af8d41a4bb4296ec09d7d, type: 3}
+  m_Name: Log
+  m_EditorClassIdentifier: 
+  guid: a809edcad43203b45af6ef1063e848f2
+  _position:
+    serializedVersion: 2
+    x: 125.33331
+    y: 440.8889
+    width: 200
+    height: 111.111115
+  blackboard: {fileID: 2007490423608439590}
+  connections: []
+  text:
+    text: CONDITION FALSE
+    parameters: []
+    needsRepaint: 0
+--- !u!114 &-1682466790226381023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c4c43567d5678c4494688e71e613647, type: 3}
+  m_Name: Choice Option
+  m_EditorClassIdentifier: 
+  guid: 5eead23b20a11c041bbd768a6f000037
+  _position:
+    serializedVersion: 2
+    x: -399.1111
+    y: 674.6667
+    width: 221.33333
+    height: 112.888855
+  blackboard: {fileID: 2007490423608439590}
+  connections: []
+  text:
+    text: choice 1
+    parameters: []
+    needsRepaint: 0
+--- !u!114 &-1672323501268962184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e87c49c4e7de2a84a999c619cc2dc71c, type: 3}
+  m_Name: Click On Object
+  m_EditorClassIdentifier: 
+  guid: afbbfc4ee0edb4641bd180f4e821cb3e
+  _position:
+    serializedVersion: 2
+    x: 0
+    y: -261.3333
+    width: 200
+    height: 175.11111
+  blackboard: {fileID: 2007490423608439590}
+  connections:
+  - guid: 9402c1d1-02af-454b-96da-3348202b46f7
+    portId: 0
+    inputNodeId: afbbfc4ee0edb4641bd180f4e821cb3e
+    outputNodeId: 9490661c946d12e41b98aef485bde691
+  objectReference:
+    refId: 7aa4a5210ec0a474f9729891d5b46117
+    name: newCrew
+    propertyName: 
+    _localValue: {fileID: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae317b6087e24f14d8d86b361377340b, type: 3}
+  m_Name: NewEvent
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: 7892304038376826175}
+  - {fileID: -1672323501268962184}
+  - {fileID: 6355260004529643678}
+  - {fileID: -1682466790226381023}
+  - {fileID: -3630605115069211175}
+  - {fileID: 6467864430154761508}
+  - {fileID: 3853582712800531476}
+  - {fileID: -2376311294750926747}
+  - {fileID: -8595566918623400325}
+  rootNode: {fileID: 7892304038376826175}
+  blackboard: {fileID: 2007490423608439590}
+  _localBlackboard: {fileID: 2007490423608439590}
+  _uniqueID: b9acbc10bae39464d96f81e2c9429006
+--- !u!114 &2007490423608439590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 685fb3b19a74af94c9d700d2c9a2db1d, type: 3}
+  m_Name: LocalBlackboard
+  m_EditorClassIdentifier: 
+  _definedVariables:
+  - rid: 4864220894982832129
+  - rid: 4864220894982832130
+  - rid: 4864220894982832132
+  _uniqueID: b9acbc10bae39464d96f81e2c9429006
+  references:
+    version: 2
+    RefIds:
+    - rid: 4864220894982832129
+      type: {class: CrewDefinition, ns: , asm: Assembly-CSharp}
+      data:
+        uniqueId: 7aa4a5210ec0a474f9729891d5b46117
+        _name: newCrew
+        _value: {fileID: 0}
+    - rid: 4864220894982832130
+      type: {class: BuildingDefinition, ns: , asm: Assembly-CSharp}
+      data:
+        uniqueId: d2b602aa266893246b32409dd9e33adf
+        _name: newBuilding
+        _value: {fileID: 0}
+    - rid: 4864220894982832132
+      type: {class: BoolVariable, ns: GameEventSystem, asm: Assembly-CSharp}
+      data:
+        uniqueId: bb1e17d9501f0d7418067e3f8f729206
+        _name: newBoolean
+        _value: 0
+--- !u!114 &3853582712800531476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c4c43567d5678c4494688e71e613647, type: 3}
+  m_Name: Choice Option
+  m_EditorClassIdentifier: 
+  guid: ff402d471fcc4ec44b045e9ad24d05f8
+  _position:
+    serializedVersion: 2
+    x: 3190.3704
+    y: 3722.963
+    width: 0
+    height: 0
+  blackboard: {fileID: 2007490423608439590}
+  connections: []
+  text:
+    text: 
+    parameters: []
+    needsRepaint: 0
+--- !u!114 &6355260004529643678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0db931727e5437408b5b4f0ab52868f, type: 3}
+  m_Name: Choice Window
+  m_EditorClassIdentifier: 
+  guid: fe2dc8ca05299ea4495f454539959394
+  _position:
+    serializedVersion: 2
+    x: -156.44446
+    y: 440.8889
+    width: 200
+    height: 111.111115
+  blackboard: {fileID: 2007490423608439590}
+  connections:
+  - guid: a4e63a9a-0401-4fdd-93bc-6722ea71ee19
+    portId: 0
+    inputNodeId: fe2dc8ca05299ea4495f454539959394
+    outputNodeId: 5eead23b20a11c041bbd768a6f000037
+  - guid: d26d2ead-5a89-4f68-8eaf-3a40c53c1d06
+    portId: 0
+    inputNodeId: fe2dc8ca05299ea4495f454539959394
+    outputNodeId: e0aebc0dd52470d40ab033d8cd9b6ec2
+  header:
+    text: Make a choice
+    parameters: []
+    needsRepaint: 0
+  body:
+    text: clicked on {0}
+    parameters:
+    - refId: 7aa4a5210ec0a474f9729891d5b46117
+      name: newCrew.Name
+      propertyName: Name
+      _localValue: 
+    needsRepaint: 1
+--- !u!114 &6467864430154761508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61a1fbd3c55d70640af45d6ab3c88bcf, type: 3}
+  m_Name: IF THEN ELSE
+  m_EditorClassIdentifier: 
+  guid: 3197fb725b1216c4e96293124bb266a6
+  _position:
+    serializedVersion: 2
+    x: -18.666687
+    y: 199.11111
+    width: 238.22223
+    height: 112.888885
+  blackboard: {fileID: 2007490423608439590}
+  connections:
+  - guid: 7a665659-325c-4cb1-b88a-bd42ad920a3d
+    portId: 0
+    inputNodeId: 3197fb725b1216c4e96293124bb266a6
+    outputNodeId: fe2dc8ca05299ea4495f454539959394
+  - guid: ba3fc4f7-27a9-446e-ba89-df2a83c9d858
+    portId: 1
+    inputNodeId: 3197fb725b1216c4e96293124bb266a6
+    outputNodeId: a809edcad43203b45af6ef1063e848f2
+  - guid: 2f26f04d-e35d-4181-a61a-7a019c0ce4c9
+    portId: 2
+    inputNodeId: 3197fb725b1216c4e96293124bb266a6
+    outputNodeId: 5c608452e954457458c8b768f4d18425
+--- !u!114 &7892304038376826175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60aeb995ed91caa4b84ff09a5a16989a, type: 3}
+  m_Name: ENTRY
+  m_EditorClassIdentifier: 
+  guid: 9490661c946d12e41b98aef485bde691
+  _position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  blackboard: {fileID: 2007490423608439590}
+  connections:
+  - guid: 178fe591-52a8-4e0a-94b6-58cb876d1ba2
+    portId: 0
+    inputNodeId: 9490661c946d12e41b98aef485bde691
+    outputNodeId: 3197fb725b1216c4e96293124bb266a6
+  activeByDefault: 1
+  canRepeat: 1

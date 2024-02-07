@@ -27,6 +27,7 @@ namespace GameEventSystem
 
             foreach (var variableDefinition in blackboard.definedVariables)
             {
+                if(variableDefinition == null) continue;
                 if (!IsMatchingType(variableDefinition.type))
                 {
                     AddExposedFields(searchList, blackboard, variableDefinition, 1);
@@ -79,7 +80,7 @@ namespace GameEventSystem
         {
             //bool variableAdded = false;
             var matchingProperties = variableDefinition.type.GetProperties()
-                .Where(prop => prop.IsDefined(typeof(ExposePropertyAttribute), false));
+                .Where(prop => prop.IsDefined(typeof(ExposePropertyToBlackBoardAttribute), false));
             foreach (var property in matchingProperties)
             {
                 if (!IsMatchingType(property.PropertyType)) continue;

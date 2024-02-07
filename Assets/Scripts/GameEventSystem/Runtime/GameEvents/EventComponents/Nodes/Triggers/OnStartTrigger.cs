@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace GameEventSystem
 {
-    [NodeInfo("On Start", "", 0, false, true)]
+    [NodeInfo("On Start", "")]
+    [NodeDescription("Execute on Game Start")]
     public class OnStartTrigger : TriggerNode
     {
         protected override void AddListener()
@@ -14,7 +15,6 @@ namespace GameEventSystem
 
         protected override void RemoveListener()
         {
-            
         }
     }
 }

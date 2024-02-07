@@ -42,7 +42,8 @@ namespace GameEventSystem.Editor
         {
             List<SearchTreeEntry> searchList = new List<SearchTreeEntry>();
             List<string> groups = new List<string>();
-            searchList.Add(new SearchTreeGroupEntry(new GUIContent("Types")));
+            searchList.Add(new SearchTreeGroupEntry(new GUIContent("Nodes")));
+            
             foreach (var type in GetTypes<T>())
             {
                 if (type == null) continue;
@@ -64,6 +65,7 @@ namespace GameEventSystem.Editor
                 }
 
                 var entry = new SearchTreeEntry(new GUIContent(menuPath.Last()));
+
                 entry.level = menuPath.Length;
                 entry.userData = type;
                 searchList.Add(entry);
@@ -105,10 +107,15 @@ namespace GameEventSystem.Editor
         }
 
         private static IEnumerable<Type> FindAllClassesOfType<T>()
-        {
-            var baseType = typeof(T);
-            var assembly = typeof(T).Assembly;
+        { 
+            var baseType = typeof(T); 
+            var assembly = typeof(T).Assembly; 
             return assembly.GetTypes().Where(t => t.IsSubclassOf(baseType));
+            
+             //return Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsSubclassOf(baseType));
+             
+            // var referencedAssemblies = Assembly.GetExecutingAssembly().GetReferencedAssemblies();
+            // return referencedAssemblies.SelectMany(x => Assembly.Load(x.FullName).GetTypes().Where(t => t.IsSubclassOf(baseType)));
         }
     }
 

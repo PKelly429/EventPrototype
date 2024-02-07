@@ -11,7 +11,7 @@ using UnityEditor.UIElements;
 namespace GameEventSystem
 {
     [System.Serializable]
-    public abstract class VariableReference
+    public abstract class VariableReference : IBindable
     {
         public string refId;
         public string name;
@@ -113,7 +113,7 @@ namespace GameEventSystem
         {
             if (_variableDefinition == null)
             {
-                ResolveRef(null);
+                Bind(null);
                 if (_variableDefinition == null)
                 {
                     return;
@@ -133,7 +133,7 @@ namespace GameEventSystem
             return name;
         }
 
-        public void ResolveRef(IBlackboard blackboard)
+        public void Bind(IBlackboard blackboard)
         {
             if (string.IsNullOrEmpty(refId)) return;
             
@@ -163,7 +163,7 @@ namespace GameEventSystem
             set => _localValue = (T)value;
         }
     }
-    
+
     [System.Serializable]
     public class IntParameter : VariableRef<int>
     {

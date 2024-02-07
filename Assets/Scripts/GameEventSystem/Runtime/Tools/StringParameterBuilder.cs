@@ -3,18 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnityEditor;
 using UnityEngine;
 
 namespace GameEventSystem
 {
-    [System.Serializable]
-    public class StringParameterBuilder : EventComponent
+    [Serializable]
+    public class StringParameterBuilder : IBindable
     {
-        public string text;
+        [TextArea] public string text;
         public StringParameter[] parameters;
         private object[] values;
 
+        [SerializeField] private bool needsRepaint;
+        
         public string GetValue()
         {
             if (values == null)
@@ -29,24 +30,25 @@ namespace GameEventSystem
 
             return string.Format(text, values);
         }
-
-        protected override void SetObjReferences()
+        
+        public void Bind(IBlackboard blackboard)
         {
-            foreach (var parameter in parameters)
+            if (parameters != null)
             {
-                parameter.ResolveRef(localBlackboard);
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    parameters[i].Bind(blackboard);
+                }
             }
         }
 
-#if UNITY_EDITOR
-        public override void DrawEditorWindowUI(IBlackboard localBlackboard)
+        public void HandleTextUpdated()
         {
-            text = EditorGUILayout.TextArea(text, new GUIStyle(EditorStyles.textArea) { wordWrap = true });
             if (string.IsNullOrEmpty(text))
             {
                 return;
             }
-
+            
             Regex rx = new Regex("\\{.\\}");
             string[] words = rx.Split(text);
             if (words.Length == 0)
@@ -66,42 +68,15 @@ namespace GameEventSystem
                         parameters[i] = old[i];
                     }
                 }
-            }
 
-            for (int i = 0; i < parameters.Length; i++)
+                needsRepaint = true;
+            }
+            else
             {
-                if (parameters[i] == null)
-                {
-                    parameters[i] = new StringParameter();
-                }
-
-                EditorGUILayout.Space(5);
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField($"{i}:", GUILayout.Width(20));
-                if (GUILayout.Button(parameters[i].GetName(), EditorStyles.linkLabel, GUILayout.ExpandWidth(false)))
-                {
-                    ShowEntitySearchWindow.Open(localBlackboard, parameters[i]);
-                }
-
-                GUILayout.FlexibleSpace();
-                EditorGUILayout.EndHorizontal();
+                needsRepaint = false;
             }
-
-            try
-            {
-                // GUI.enabled = false;
-                // EditorGUILayout.TextArea(ValidateValue(), new GUIStyle(EditorStyles.textArea){wordWrap =true});
-                // GUI.enabled = true;
-                string s = ValidateValue();
-            }
-            catch (Exception e)
-            {
-                EditorGUILayout.HelpBox("String cannot be formatted.", MessageType.Error);
-            }
-
-            EditorGUILayout.Space(5);
         }
-
+        
         public string ValidateValue()
         {
             values = new object[parameters.Length];
@@ -112,6 +87,5 @@ namespace GameEventSystem
 
             return string.Format(text, values);
         }
-#endif
     }
 }

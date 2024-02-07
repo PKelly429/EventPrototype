@@ -15,31 +15,17 @@ namespace GameEventSystem
         {
         }
     }
-    
-    public class TriggerSearchProvider : TypeSearchProvider<Trigger>
-    {
-        public TriggerSearchProvider(Action<Type> callback) : base(callback)
-        {
-        }
-    }
-
-    public class ConditionSearchProvider : TypeSearchProvider<Condition>
-    {
-        public ConditionSearchProvider(Action<Type> callback) : base(callback)
-        {
-        }
-    }
-
-    public class EffectSearchProvider : TypeSearchProvider<Effect>
-    {
-        public EffectSearchProvider(Action<Type> callback) : base(callback)
-        {
-        }
-    }
 
     public class VariableDefinitionSearchProvider : TypeSearchProvider<VariableDefinition>
     {
         public VariableDefinitionSearchProvider(Action<Type> callback) : base(callback)
+        {
+        }
+    }
+    
+    public class ConditionSearchProvider : TypeSearchProvider<AbstractCondition>
+    {
+        public ConditionSearchProvider(Action<Type> callback) : base(callback)
         {
         }
     }

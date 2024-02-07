@@ -15,6 +15,7 @@ using UnityEditor.UIElements;
 
 namespace GameEventSystem
 {
+    [Serializable]
     public abstract class GameEventNode : ScriptableObject
     {
         public enum State 
@@ -27,28 +28,55 @@ namespace GameEventSystem
         [HideInInspector] [SerializeField] private string guid;
         [HideInInspector] [SerializeField] private Rect _position;
         
-        [NonSerialized] public State state = State.Idle;
         [HideInInspector] public AssetBlackboard blackboard;
         
         [NonSerialized] public List<GameEventNode> children = new List<GameEventNode>();
+        [NonSerialized] public List<GameEventNode> conditionNodes = new List<GameEventNode>();
         [HideInInspector] public List<GameEventConnection> connections = new List<GameEventConnection>();
+        
+        [NonSerialized] public State state = State.Idle;
+        [NonSerialized] protected GameEvent _runtimeGameEvent;
+        
+        public virtual bool IsRootNode => false;
+        public virtual bool IsTriggerNode => false;
+        public virtual bool IsConditionNode => false;
 
         public string Id => guid;
         public Rect Position => _position;
 
         public void Setup(GameEvent parent)
         {
+            _runtimeGameEvent = parent;
             foreach (var connection in connections)
             {
-                if (connection.portId == 0)
+                var nodeToAdd = parent.GetNode(connection.outputNodeId);
+                if (nodeToAdd.IsConditionNode)
                 {
-                    children.Add(parent.GetNode(connection.outputNodeId));   
+                    conditionNodes.Add(nodeToAdd);
+                }
+                else
+                {
+                    children.Add(nodeToAdd);
                 }
             }
 
             SortChildren();
             
             OnSetup();
+        }
+
+        public virtual bool CheckConditions()
+        {
+            foreach (var conditionNode in conditionNodes)
+            {
+                if (!conditionNode.CheckConditions())
+                {
+                    state = State.Failure;
+                    return false;
+                }
+            }
+
+            return true;
         }
         
         public void SortChildren() 
@@ -68,7 +96,7 @@ namespace GameEventSystem
 
         public virtual State Execute()
         {
-            if (state == State.Idle) 
+            if (state != State.Running) 
             {
                 OnStart();
             }
@@ -85,7 +113,15 @@ namespace GameEventSystem
 
         protected virtual void OnStart() { }
 
-        protected virtual void OnStop() { }
+        protected virtual void OnStop()
+        {
+            if (state != State.Success) return;
+
+            foreach (var child in children)
+            {
+                child.Execute();
+            }
+        }
         
         protected abstract State OnUpdate();
 
@@ -93,6 +129,12 @@ namespace GameEventSystem
         public void DrawInspector(VisualElement contentContainer)
         {
             SerializedObject obj = new SerializedObject(this);
+            
+            NodeInfoAttribute info = GetType().GetCustomAttribute<NodeInfoAttribute>() ?? new NodeInfoAttribute(name);
+            
+            Label nodeHeader = new Label(info.NodeTitle);
+            nodeHeader.AddToClassList("node-header");
+            contentContainer.Add(nodeHeader);
             
             var fields = GetType().GetFields();
             foreach (var field in fields)
@@ -111,20 +153,39 @@ namespace GameEventSystem
         public void BindBlackboard(AssetBlackboard blackboard)
         {
             this.blackboard = blackboard;
-
-            var bbParams = GetType().GetFields().Where(fieldInfo => typeof(VariableReference).IsAssignableFrom(fieldInfo.FieldType));
-            foreach (var fieldInfo in bbParams)
+            
+            var bindableFields = GetType().GetFields().Where(fieldInfo => typeof(IBindable).IsAssignableFrom(fieldInfo.FieldType));
+            foreach (var fieldInfo in bindableFields)
             {
-                VariableReference param = fieldInfo.GetValue(this) as VariableReference;
-                param?.ResolveRef(this.blackboard);
+                IBindable field = fieldInfo.GetValue(this) as IBindable;
+                field?.Bind(this.blackboard);
             }
+
+#if UNITY_EDITOR
+            EditorUtility.SetDirty(this);
+            
+            RequestRedraw();
+#endif
         }
 
+#if UNITY_EDITOR
+        private VisualElement _contentContainer;
 
-        
+        public void RequestRedraw()
+        {
+            // Dedraw the node contents when the blackboard changes - this fixes some weird problem with the
+            // UI callbacks becoming stale when a new blackboard is made
+            if (_contentContainer != null)
+            {
+                _contentContainer.Clear();
+                DrawContent(_contentContainer);
+            }
+        }
+#endif
         public virtual void DrawContent(VisualElement contentContainer)
         {
 #if UNITY_EDITOR
+            _contentContainer = contentContainer;
             var fieldsToDisplay = GetType().GetFields()
                 .Where(fieldInfo => fieldInfo.IsDefined(typeof(DisplayFieldAttribute), false));
 

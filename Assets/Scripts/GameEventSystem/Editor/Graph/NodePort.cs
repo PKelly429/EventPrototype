@@ -60,12 +60,12 @@ namespace GameEventSystem.Editor
             }
         }
 
-        public NodePort(Direction direction, Capacity capacity) : base(Orientation.Vertical, direction, capacity, typeof(bool)) 
+        public NodePort(Direction direction, Capacity capacity, PortTypeDefinitions.PortTypes portType, Orientation orientation = Orientation.Vertical) : base(orientation, direction, capacity, PortTypeDefinitions.GetPortType(portType)) 
         {
             var connectorListener = new DefaultEdgeConnectorListener();
             m_EdgeConnector = new EdgeConnector<Edge>(connectorListener);
             this.AddManipulator(m_EdgeConnector);
-            style.width = 100;
+            style.width = 40;
         }
 
         public override bool ContainsPoint(Vector2 localPoint) 

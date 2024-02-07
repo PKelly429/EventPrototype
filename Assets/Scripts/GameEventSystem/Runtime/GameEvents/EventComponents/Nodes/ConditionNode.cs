@@ -1,15 +1,35 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameEventSystem
-{ 
-    public abstract class ConditionNode : GameEventNode
+{
+    [NodeInfo("Condition")]
+    [NodeConnectionInput(PortTypeDefinitions.PortTypes.Condition, 1)]
+    [NodeConnectionOutput(PortTypeDefinitions.PortTypes.Condition, 0)]
+    public class ConditionNode : GameEventNode
     {
-        protected abstract bool CheckCondition();
+        public override bool IsConditionNode => true;
+
+        [DisplayField] public Condition condition;
+        
+        
+        public override bool CheckConditions()
+        {
+            bool result = condition == null || condition.CheckCondition();
+            state = result ? State.Success : State.Failure;
+            
+            return result;
+        }
+        
         protected override State OnUpdate()
         {
-            return state;
+            if (CheckConditions())
+            {
+                return State.Success;
+            }
+            return State.Failure;
         }
     }
 }

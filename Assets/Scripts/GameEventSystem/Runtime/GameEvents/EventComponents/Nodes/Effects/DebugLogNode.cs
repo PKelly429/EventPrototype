@@ -9,11 +9,12 @@ using UnityEditor.UIElements;
 
 namespace GameEventSystem
 {
-    [NodeInfo("Log", "")]
+    [NodeInfo("Log", "DEBUG", 999)]
     [NodeDescription("Logs a message to the console")]
     public class DebugLogNode : EffectNode
     {
-        [DisplayField] public StringParameter text;
+        //[DisplayField] public StringParameter text;
+        public StringParameterBuilder text;
 
         protected override State OnUpdate()
         {

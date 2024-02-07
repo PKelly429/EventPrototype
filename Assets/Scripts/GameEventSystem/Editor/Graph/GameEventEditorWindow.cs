@@ -43,7 +43,7 @@ namespace GameEventSystem.Editor
             GameEventEditorWindow newWindow =
                 CreateWindow<GameEventEditorWindow>(typeof(GameEventEditorWindow), typeof(SceneView));
             newWindow.titleContent = new GUIContent($"{target.name}", EditorGUIUtility.ObjectContent(null, typeof(GameEvent)).image);
-            newWindow.Load(target);
+            newWindow._currentEvent = target;
         }
 
         public void CreateGUI()
@@ -86,6 +86,8 @@ namespace GameEventSystem.Editor
             
             _currentView.OnNodeSelected += OnNodeSelectionChanged;
             _currentView.OnNodeUnselected += OnNodeUnselected;
+            
+            if(_currentEvent != null) Load(_currentEvent);
         }
         
         [OnOpenAsset]
@@ -154,6 +156,7 @@ namespace GameEventSystem.Editor
                     OnSelectionChange();
                     break;
                 case PlayModeStateChange.ExitingPlayMode:
+                    OnSelectionChange();
                     break;
             }
         }
@@ -162,11 +165,16 @@ namespace GameEventSystem.Editor
         {
             EditorApplication.delayCall += () =>
             {
+                if (_currentView == null) return;
+                
+                if (_currentEvent == null)
+                {
+                    if(_overlay !=null) _overlay.style.visibility = Visibility.Visible;
+                    _currentView.ClearView();
+                }
+
                 if (_inspectorView == null) return;
-                
-                // _overlay.style.visibility = Visibility.Visible;
-                // _currentView.ClearView();
-                
+
                 GameEvent gameEvent = Selection.activeObject as GameEvent;
                 if (!gameEvent)
                 {
@@ -204,7 +212,7 @@ namespace GameEventSystem.Editor
             _inspectorView.UpdateSelection(null);
             _blackboardView.SetGameEvent(target);
             DrawGraph();
-            _overlay.style.visibility = Visibility.Hidden;
+            if(_currentEvent != null) _overlay.style.visibility = Visibility.Hidden;
         }
 
         private void DrawGraph()

@@ -7,11 +7,11 @@ namespace GameEventSystem
 {
     public class GameEventRunner : MonoBehaviour
     {
-        [SerializeField] private GameEvent _gameEvent;
+        [SerializeField] private GameEvent _gameEvent; // used to initialize an event on start
 
-        [NonSerialized] private GameEvent _runningEvent;
+        [NonSerialized] private GameEvent _runtimeEvent;
 
-        public GameEvent GameEvent => _runningEvent;
+        public GameEvent GameEvent => _runtimeEvent;
 
         public void OnEnable()
         {
@@ -25,8 +25,9 @@ namespace GameEventSystem
         {
             if (_gameEvent == null) return;
 
-            _runningEvent = _gameEvent.Clone();
-            _runningEvent.Setup();
+            _runtimeEvent = _gameEvent.Clone();
+            
+            _runtimeEvent.Setup();
         }
         
         public static void StartEvent(GameEvent gameEvent, Transform parent = null)

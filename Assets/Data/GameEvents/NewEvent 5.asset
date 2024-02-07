@@ -1,0 +1,140 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7151033325074430883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 934cb3cb408765041b69308f62d0c65c, type: 3}
+  m_Name: EmergentEventTrigger
+  m_EditorClassIdentifier: 
+  guid: d94ecdb9a21c36b4a9db2429ae944141
+  _position:
+    serializedVersion: 2
+    x: 0
+    y: -201.77777
+    width: 236.44446
+    height: 106.66666
+  blackboard: {fileID: 0}
+  connections:
+  - guid: 511c0e18-48a4-4632-880d-36db45b6b01c
+    portId: 0
+    inputNodeId: d94ecdb9a21c36b4a9db2429ae944141
+    outputNodeId: fec6bfbe2db37da48a50cbf07b00f9b7
+--- !u!114 &-4031311763850684233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60aeb995ed91caa4b84ff09a5a16989a, type: 3}
+  m_Name: RootNode
+  m_EditorClassIdentifier: 
+  guid: fec6bfbe2db37da48a50cbf07b00f9b7
+  _position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  blackboard: {fileID: 0}
+  connections:
+  - guid: fbfa663b-4750-4d59-95d5-0b4ef865cdee
+    portId: 0
+    inputNodeId: fec6bfbe2db37da48a50cbf07b00f9b7
+    outputNodeId: 1e99eb7c4197ea043b4823ecab1b447c
+  - guid: 26591f3d-3423-4392-88e2-0bed6f219326
+    portId: 1
+    inputNodeId: fec6bfbe2db37da48a50cbf07b00f9b7
+    outputNodeId: c3f1187ec62363043a7a78045b93ba1a
+  activeByDefault: 1
+  canRepeat: 1
+--- !u!114 &-1499143474395438759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75deb44c25b455b45b6ac0b264cae313, type: 3}
+  m_Name: ConditionNode
+  m_EditorClassIdentifier: 
+  guid: c3f1187ec62363043a7a78045b93ba1a
+  _position:
+    serializedVersion: 2
+    x: 386.0167
+    y: -32.20001
+    width: 0
+    height: 0
+  blackboard: {fileID: 0}
+  connections: []
+  condition:
+    _redraw: 0
+    condition:
+      rid: 4864220894982832194
+  references:
+    version: 2
+    RefIds:
+    - rid: 4864220894982832194
+      type: {class: CheckBoolCondition, ns: GameEventSystem, asm: Assembly-CSharp}
+      data:
+        testParameter:
+          refId: 
+          name: 
+          propertyName: 
+          _localValue: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae317b6087e24f14d8d86b361377340b, type: 3}
+  m_Name: NewEvent 5
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: -4031311763850684233}
+  - {fileID: -7151033325074430883}
+  - {fileID: 2187194742482184144}
+  - {fileID: -1499143474395438759}
+  rootNode: {fileID: -4031311763850684233}
+  blackboard: {fileID: 0}
+  _localBlackboard: {fileID: 0}
+  _uniqueID: 6a9ce8b1d44bb52439d12d142344cf0d
+--- !u!114 &2187194742482184144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3da043a51af8d41a4bb4296ec09d7d, type: 3}
+  m_Name: DebugLogNode
+  m_EditorClassIdentifier: 
+  guid: 1e99eb7c4197ea043b4823ecab1b447c
+  _position:
+    serializedVersion: 2
+    x: 0
+    y: 240
+    width: 200
+    height: 111.111115
+  blackboard: {fileID: 0}
+  connections: []
+  text:
+    text: Emergent Event Fired!
+    parameters: []
+    needsRepaint: 0
