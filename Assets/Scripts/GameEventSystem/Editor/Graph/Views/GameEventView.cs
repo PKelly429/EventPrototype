@@ -321,7 +321,27 @@ namespace GameEventSystem.Editor
                     {
                         if (_edgeDictionary.ContainsKey(n.connections[i]))
                         {
-                            RemoveElement(_edgeDictionary[n.connections[i]]);
+                            var edge = _edgeDictionary[n.connections[i]];
+
+                            try
+                            {
+                                if (n.connections[i].outputNodeId.Equals(nodeView.Id))
+                                {
+                                    _nodeDictionary[n.connections[i].inputNodeId].outputPorts[n.connections[i].portId]
+                                        .Disconnect(edge);
+                                }
+                                else
+                                {
+                                    _nodeDictionary[n.connections[i].outputNodeId].inputPort.Disconnect(edge);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.LogException(e);
+                            }
+
+                            RemoveElement(edge);
+                            RemoveConnection(edge);
                         }
                     }
                 }
@@ -346,7 +366,6 @@ namespace GameEventSystem.Editor
 
                 Edge edge = inputPort.ConnectTo(outputPort);
 
-
                 AddElement(edge);
                 _connectionDictionary.Add(edge, connection);
                 _edgeDictionary.Add(connection, edge);
@@ -362,7 +381,7 @@ namespace GameEventSystem.Editor
         private void RemoveConnection(Edge edge)
         {
             if (!_connectionDictionary.ContainsKey(edge)) return;
-
+            
             GameEventConnection connection = _connectionDictionary[edge];
             GetNode(connection.inputNodeId)?.RemoveConnection(connection);
             

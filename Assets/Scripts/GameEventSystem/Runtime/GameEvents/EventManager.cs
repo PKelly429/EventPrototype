@@ -16,6 +16,7 @@ namespace GameEventSystem
         
         public Action OnEventLoadingFinished;
         public List<GameEvent> gameEvents = new List<GameEvent>();
+        public Dictionary<string, GameEvent> gameEventsLookup = new Dictionary<string, GameEvent>();
 
         private static EventManager _eventManager;
         private List<GameEvent> _emergentEvents = new List<GameEvent>();
@@ -27,6 +28,15 @@ namespace GameEventSystem
 
         private bool _eventsFinishedLoading;
 
+        public static void RegisterGameEvent(GameEvent gameEvent)
+        {
+            if (_eventManager == null) return;
+            if (gameEvent == null) return;
+            if(_eventManager.gameEventsLookup.ContainsKey(gameEvent.UniqueId)) return;
+            _eventManager.gameEvents.Add(gameEvent);
+            _eventManager.gameEventsLookup.Add(gameEvent.UniqueId, gameEvent);
+        }
+
         public static void RegisterEmergentEvent(GameEvent gameEvent)
         {
             if (_eventManager == null) return;
@@ -37,6 +47,13 @@ namespace GameEventSystem
         {
             if (_eventManager == null) return;
             _eventManager._emergentEvents.Remove(gameEvent);
+        }
+
+        public static void EnableGameEvent(GameEvent gameEvent)
+        {
+            if (_eventManager == null) return;
+            if (gameEvent == null) return;
+            if(_eventManager.gameEventsLookup.ContainsKey(gameEvent.UniqueId)) _eventManager.gameEventsLookup[gameEvent.UniqueId].SetActive(); 
         }
         
         public static void SetEventTriggered(GameEvent gameEvent)

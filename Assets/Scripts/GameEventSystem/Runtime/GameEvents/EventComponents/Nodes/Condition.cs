@@ -6,7 +6,8 @@ using UnityEngine;
 namespace GameEventSystem
 {
     [Serializable]
-    public sealed class Condition // wrapper class for drawing purposes: inherit from AbstractCondition
+    
+    public sealed class Condition : IBindable // wrapper class for drawing purposes: inherit from AbstractCondition
     {
         [SerializeField] private bool _redraw; // used to redraw the inspector when changed
         [SerializeReference] public AbstractCondition condition;
@@ -17,10 +18,16 @@ namespace GameEventSystem
             
             return condition.CheckCondition(parentEvent);
         }
+
+        public void Bind(IBlackboard blackboard)
+        {
+            if(condition!=null) condition.Bind(blackboard);
+        }
     }
 
-    public abstract class AbstractCondition
+    public abstract class AbstractCondition : IBindable
     {
         public abstract bool CheckCondition(GameEvent parentEvent);
+        public virtual void Bind(IBlackboard blackboard){ }
     }
 }

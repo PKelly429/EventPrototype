@@ -35,6 +35,7 @@ namespace GameEventSystem.Editor
 				typeText = valueType.Name,
 				userData = property
 			};
+			field.editTextRequested += EditTextRequested;
 			rowView.Add(field);
 
 			var deleteButton = new Button(() => onRemoveBlackboardProperty.Invoke(this))
@@ -48,7 +49,12 @@ namespace GameEventSystem.Editor
 			Add(rowView);
 			CreateField(field);
 		}
-		
+
+		private void EditTextRequested(VisualElement arg1, string arg2)
+		{
+			editTextRequested?.Invoke(arg1, arg2);
+		}
+
 		private void CreateField(VisualElement field)
 		{
 			string bindingPath = blackboard.GetBindingPath(property);

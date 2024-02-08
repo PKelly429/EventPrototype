@@ -22,7 +22,7 @@ namespace GameEventSystem
             
             int selectedPortId = CheckConditions() ? 0 : 1;
 
-            state = State.Success;
+            SetState(State.Success);
             foreach (var connection in connections)
             {
                 if (connection.portId == selectedPortId)

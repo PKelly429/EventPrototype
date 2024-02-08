@@ -12,12 +12,14 @@ namespace GameEventSystem
     {
         public override bool IsConditionNode => true;
 
+        [DisplayField] public bool invert;
         [DisplayField] public Condition condition;
         
         public override bool CheckConditions()
         {
-            bool result = condition == null || condition.CheckCondition(_runtimeGameEvent);
-            state = result ? State.Success : State.Failure;
+            bool result = condition == null || (condition.CheckCondition(runtimeGameEvent) != invert);
+            
+            SetState(result ? State.Success : State.Failure);
             
             return result;
         }
@@ -34,7 +36,7 @@ namespace GameEventSystem
         public override void PerformTestGraphFunction()
         {
 #if DEBUG
-            if (_runtimeGameEvent == null)
+            if (runtimeGameEvent == null)
             {
                 Debug.LogError("Trying to check condition on event that is not running.");
                 return;

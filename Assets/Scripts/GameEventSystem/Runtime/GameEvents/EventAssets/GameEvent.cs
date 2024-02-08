@@ -34,34 +34,46 @@ namespace GameEventSystem
         public string UniqueId => _uniqueID;
 
         public bool CanEventRepeat => rootNode.canRepeat;
+        public bool IsComplete => EventManager.IsEventComplete(this);
 
         [NonSerialized] private Dictionary<string, GameEventNode> nodeLookup = new Dictionary<string, GameEventNode>();
 
         private bool _isInitialising;
-        private bool _delayedTrigger;
+        private bool _triggeredInSetup;
 
         private bool _triggersSubscribed;
         private List<TriggerNode> _triggerNodes = new List<TriggerNode>();
-        private List<GameEventNode> _activeNodes = new List<GameEventNode>();
+        private HashSet<GameEventNode> _activeNodes = new HashSet<GameEventNode>();
 
         public void Setup() // TODO: pass in saved state on setup
         {
             _isInitialising = true;
-            _delayedTrigger = false;
+            _triggeredInSetup = false;
 
             foreach (var node in nodes)
             {
                 node.Setup(this);
             }
             
+            EventManager.RegisterGameEvent(this);
+
+            //TODO: Should probably delay until all events are loaded
             //TODO: Save / load event state
             if(rootNode.activeByDefault) SetState(EventState.Ready);
 
             _isInitialising = false;
-            if (_delayedTrigger)
+            if (_triggeredInSetup)
             {
-                _delayedTrigger = false;
+                _triggeredInSetup = false;
                 FireEvent();
+            }
+        }
+
+        public void SetActive()
+        {
+            if (_state == EventState.Disabled)
+            {
+                SetState(EventState.Ready);
             }
         }
 
@@ -106,13 +118,36 @@ namespace GameEventSystem
         {
             if (_isInitialising)
             {
-                _delayedTrigger = true;
+                _triggeredInSetup = true;
                 return;
             }
 
             SetState(EventState.Running);
+            foreach (var node in nodes)
+            {
+                if(node.IsTriggerNode || node.IsConditionNode) continue;
+                node.SetState(GameEventNode.State.Idle);
+            }
 
             rootNode.Execute();   
+        }
+
+        // called from nodes to detect when event is complete
+        public void SetNodeActive(GameEventNode node)
+        {
+            _activeNodes.Add(node);
+        }
+        
+        // called from nodes to detect when event is complete
+        public void SetNodeComplete(GameEventNode node)
+        {
+            _activeNodes.Remove(node);
+            
+            if (_activeNodes.Count == 0)
+            {
+                SetState(CanEventRepeat ? EventState.Ready : EventState.Complete);
+                EventManager.SetEventComplete(this);
+            }
         }
         
         #region Runtime Init
@@ -167,6 +202,7 @@ namespace GameEventSystem
             node.name = $"{type.Name}";
             node.GenerateGUID();
             nodes.Add(node);
+            if(blackboard != null) node.BindBlackboard(blackboard);
 
             if (!Application.isPlaying)
             {
@@ -202,6 +238,9 @@ namespace GameEventSystem
 
             blackboard = _localBlackboard;
             
+            EditorUtility.SetDirty(this);
+            EditorUtility.SetDirty(blackboard);
+
             return blackboard;
         }
 #endif

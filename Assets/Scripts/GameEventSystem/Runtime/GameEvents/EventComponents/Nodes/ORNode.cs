@@ -35,7 +35,7 @@ namespace GameEventSystem
         public override void PerformTestGraphFunction()
         {
 #if DEBUG
-            if (_runtimeGameEvent == null)
+            if (runtimeGameEvent == null)
             {
                 Debug.LogError("Trying to check condition on event that is not running.");
                 return;
@@ -44,9 +44,9 @@ namespace GameEventSystem
             bool success = CheckConditions();
             if (success)
             {
-                state = State.Success;
+                SetState(State.Success);
             }
-            state = State.Failure;
+            SetState(State.Failure);
             Debug.Log($"CheckCondition: {success}");
         }
     }

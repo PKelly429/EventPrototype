@@ -72,17 +72,8 @@ namespace GameEventSystem.Editor
             
             // Toolbar assets menu
             _toolbarMenu = rootVisualElement.Q<ToolbarMenu>();
-            var behaviourTrees = LoadAssets<GameEvent>();
-            behaviourTrees.ForEach(tree => 
-            {
-                _toolbarMenu.menu.AppendAction($"{tree.name}", (a) => 
-                {
-                    Selection.activeObject = tree;
-                });
-            });
-            _toolbarMenu.menu.AppendSeparator();
-            _toolbarMenu.menu.AppendAction("New GameEvent...", (a) => CreateNewGameEvent("NewEvent"));
-            
+            PopulateMenu();
+
             // New Tree Dialog
             _newEventNameField = rootVisualElement.Q<TextField>("EventName");
             _locationPathField = rootVisualElement.Q<TextField>("LocationPath");
@@ -107,6 +98,25 @@ namespace GameEventSystem.Editor
             }
 
             return false;
+        }
+
+        private void PopulateMenu()
+        {
+            for (int i = _toolbarMenu.menu.MenuItems().Count - 1; i >= 0; i--)
+            {
+                _toolbarMenu.menu.RemoveItemAt(i);
+            }
+
+            var gameEvents = LoadAssets<GameEvent>();
+            gameEvents.ForEach(gameEvent => 
+            {
+                _toolbarMenu.menu.AppendAction($"{gameEvent.name}", (a) => 
+                {
+                    Selection.activeObject = gameEvent;
+                });
+            });
+            _toolbarMenu.menu.AppendSeparator();
+            _toolbarMenu.menu.AppendAction("New GameEvent...", (a) => CreateNewGameEvent("NewEvent"));
         }
 
         List<T> LoadAssets<T>() where T : UnityEngine.Object 
@@ -177,6 +187,7 @@ namespace GameEventSystem.Editor
                 {
                     if(_overlay !=null) _overlay.style.visibility = Visibility.Visible;
                     _currentView.ClearView();
+                    PopulateMenu();
                 }
 
                 if (_inspectorView == null) return;
@@ -215,8 +226,9 @@ namespace GameEventSystem.Editor
         public void Load(GameEvent target)
         {
             _currentEvent = target;
+            _serializedObject = new SerializedObject(_currentEvent);
             _inspectorView.UpdateSelection(null);
-            _blackboardView.SetGameEvent(target);
+            _blackboardView.SetGameEvent(target, _serializedObject);
             DrawGraph();
             if(_currentEvent != null) _overlay.style.visibility = Visibility.Hidden;
         }
@@ -228,11 +240,11 @@ namespace GameEventSystem.Editor
             {
                 _currentView.ClearView();
                 titleContent = new GUIContent($"(none)", EditorGUIUtility.ObjectContent(null, typeof(GameEvent)).image);
+                PopulateMenu();
                 return;
             }
 
             titleContent = new GUIContent($"{_currentEvent.name}", EditorGUIUtility.ObjectContent(null, typeof(GameEvent)).image);
-            _serializedObject = new SerializedObject(_currentEvent);
             _currentView.PopulateView(_serializedObject, this);
         }
         
@@ -246,6 +258,19 @@ namespace GameEventSystem.Editor
             AssetDatabase.SaveAssets();
             Selection.activeObject = newEvent;
             EditorGUIUtility.PingObject(newEvent);
+        }
+
+        public static void Redraw()
+        {
+            if (_instance != null)
+            {
+                _instance._Redraw();
+            }
+        }
+        
+        private void _Redraw()
+        {
+            _inspectorView.Redraw();
         }
     }
 }

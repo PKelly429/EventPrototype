@@ -24,10 +24,23 @@ namespace GameEventSystem
 
         public void FireEvent()
         {
-            if (_runtimeGameEvent != null)
+            if (runtimeGameEvent != null)
             {
-                _runtimeGameEvent.FireEvent();
+                runtimeGameEvent.FireEvent();
             }
+        }
+        
+        public override bool CheckConditions() // don't fail root node if conditions are not met
+        {
+            foreach (var conditionNode in conditionNodes)
+            {
+                if (!conditionNode.CheckConditions())
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
         
         public override void PerformTestGraphFunction()

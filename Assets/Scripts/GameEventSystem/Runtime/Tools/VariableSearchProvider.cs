@@ -103,6 +103,7 @@ namespace GameEventSystem
 
         private bool IsMatchingType(Type type)
         {
+            if (searchType == null) return true;
             return type.IsAssignableFrom(searchType) || searchType.IsAssignableFrom(type);
         }
 

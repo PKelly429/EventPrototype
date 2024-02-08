@@ -10,17 +10,18 @@ namespace GameEventSystem
     public abstract class TriggerNode : GameEventNode
     {
         public override bool IsTriggerNode => true;
+        public override bool ShouldUpdateWhenRunning => false;
 
         public void AddTriggerListener()
         {
-            state = State.Running;
+            SetState(State.Running);
             AddListener();
         }
         public void RemoveTriggerListener()
         {
             RemoveListener();
             
-            if(state != State.Success) state = State.Failure;
+            if(state != State.Success) SetState(State.Failure);
         }
 
         protected override State OnUpdate()
@@ -33,10 +34,10 @@ namespace GameEventSystem
 
         protected void Trigger()
         {
-            if (_runtimeGameEvent.CheckConditions())
+            if (runtimeGameEvent.CheckConditions())
             {
-                state = State.Success;
-                _runtimeGameEvent.FireEvent();
+                SetState(State.Success);
+                runtimeGameEvent.FireEvent();
             }
         }
     }

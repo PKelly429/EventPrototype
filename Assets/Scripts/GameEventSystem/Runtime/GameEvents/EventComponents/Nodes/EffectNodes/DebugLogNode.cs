@@ -13,7 +13,6 @@ namespace GameEventSystem
     [NodeDescription("Logs a message to the console")]
     public class DebugLogNode : EffectNode
     {
-        //[DisplayField] public StringParameter text;
         public StringParameterBuilder text;
 
         protected override State OnUpdate()

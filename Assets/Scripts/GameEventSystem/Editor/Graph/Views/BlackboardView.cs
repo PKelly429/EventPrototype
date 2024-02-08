@@ -7,6 +7,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace GameEventSystem.Editor
 {
@@ -31,18 +32,19 @@ namespace GameEventSystem.Editor
         {
             _blackboardField = contentContainer.Q<ObjectField>("blackboard-field");
             _blackboardField.objectType = typeof(AssetBlackboard);
+            _blackboardField.RegisterValueChangedCallback(BlackboardChanged);
             
             _useLocalBlackboard = contentContainer.Q<Button>("use-local-blackboard");
             _addButton = contentContainer.Q<Button>("addButton");
-            _useLocalBlackboard.clicked += UseLocalBlackboardOnclicked;
+            _useLocalBlackboard.clicked += UseLocalBlackboardOnClicked;
             _addButton.clicked += AddButtonOnclicked;
 
             _blackboardTitle = contentContainer.Q<Label>("blackboard-name");
             
             _blackboardContent = contentContainer.Q<ScrollView>("blackboard-params");
         }
-        
-        public void SetGameEvent(GameEvent gameEvent)
+
+        public void SetGameEvent(GameEvent gameEvent, SerializedObject serializedObject)
         {
             _currentGameEvent = gameEvent;
             if (_currentGameEvent == null)
@@ -58,8 +60,8 @@ namespace GameEventSystem.Editor
             _blackboardField.SetEnabled(true);
             _useLocalBlackboard.SetEnabled(true);
             _blackboardField.bindingPath ="blackboard";
-            _blackboardField.Bind(new SerializedObject(_currentGameEvent));
-            
+            _blackboardField.Bind(serializedObject);
+
             SetBlackboard(gameEvent.blackboard);
         }
 
@@ -94,6 +96,8 @@ namespace GameEventSystem.Editor
             {
                 AddBlackboardProperty(property);
             }
+            
+            GameEventEditorWindow.Redraw();
         }
         
         public void AddBlackboardProperty(VariableDefinition property)
@@ -116,6 +120,7 @@ namespace GameEventSystem.Editor
             _blackboardContent.Remove(field);
 
             EditorUtility.SetDirty(_blackboard);
+            EditorUtility.SetDirty(_currentGameEvent);
         }
         
         public void EditTextRequested(VisualElement visualElement, string newText)
@@ -127,7 +132,7 @@ namespace GameEventSystem.Editor
 
             if (!string.IsNullOrEmpty(newText) && newText != property.Name)
             {
-                Undo.RecordObject(_currentGameEvent, "Edit Blackboard Text");
+                Undo.RecordObject(_blackboard, "Edit Blackboard Text");
             
                 int count = 0;
                 string propertyName = newText;
@@ -139,12 +144,13 @@ namespace GameEventSystem.Editor
             
                 property.Name = propertyName;
                 field.text = property.Name;
-                 
+
                 EditorUtility.SetDirty(_blackboard);
+                EditorUtility.SetDirty(_currentGameEvent);
             }
         }
         
-        private void UseLocalBlackboardOnclicked()
+        private void UseLocalBlackboardOnClicked()
         {
             if (_currentGameEvent == null) return;
             SetBlackboard(_currentGameEvent.CreateLocalBlackboard());
@@ -162,6 +168,11 @@ namespace GameEventSystem.Editor
             });
             SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)),
                 provider);
+        }
+        
+        private void BlackboardChanged(ChangeEvent<Object> evt)
+        {
+            GameEventEditorWindow.Redraw();
         }
     }
 }

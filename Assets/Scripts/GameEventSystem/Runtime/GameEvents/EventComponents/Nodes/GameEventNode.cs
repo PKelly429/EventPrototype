@@ -34,22 +34,46 @@ namespace GameEventSystem
         [NonSerialized] public List<GameEventNode> conditionNodes = new List<GameEventNode>();
         [HideInInspector] public List<GameEventConnection> connections = new List<GameEventConnection>();
         
-        [NonSerialized] public State state = State.Idle;
-        [NonSerialized] protected GameEvent _runtimeGameEvent;
+        public State state { get; private set; } = State.Idle;
+        [NonSerialized] protected GameEvent runtimeGameEvent;
         [NonSerialized] private bool _isSubscribedToEventRunner;
         
         public virtual bool IsRootNode => false;
         public virtual bool IsTriggerNode => false;
         public virtual bool IsConditionNode => false;
 
+        public virtual bool ShouldUpdateWhenRunning => true;
+        
         public string Id => guid;
         public Rect Position => _position;
+
+        public void SetState(State newState)
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying) return;
+#endif
+            
+            if (state == newState) return;
+
+            state = newState;
+
+            if (!ShouldUpdateWhenRunning) return;
+            
+            if (state == State.Running)
+            {
+                SubscribeToEventRunner();
+            }
+            else
+            {
+                UnsubscribeToEventRunner();
+            }
+        }
 
         public void Setup(GameEvent parent)
         {
             try
             {
-                _runtimeGameEvent = parent;
+                runtimeGameEvent = parent;
                 foreach (var connection in connections)
                 {
                     var nodeToAdd = parent.GetNode(connection.outputNodeId);
@@ -99,33 +123,26 @@ namespace GameEventSystem
         {
             return left.Position.x < right.Position.x ? -1 : 1;
         }
-        
-        public virtual void OnSetup()
-        {
-            
-        }
 
-        public virtual State Execute()
+        public State Execute()
         {
+            if (state is State.Success or State.Failure)
+            {
+                return state;
+            }
+            
             if (state != State.Running) 
             {
+                runtimeGameEvent.SetNodeActive(this);
                 OnStart();
             }
 
-            state = OnUpdate();
-            
-            if (state == State.Running)
-            {
-                SubscribeToEventRunner();
-            }
-            else
-            {
-                UnsubscribeToEventRunner();
-            }
-            
-            if (state != State.Running) 
+            SetState(OnUpdate());
+
+            if (state is State.Success or State.Failure) 
             {
                 OnStop();
+                runtimeGameEvent.SetNodeComplete(this);
             }
             
             return state;
@@ -146,12 +163,26 @@ namespace GameEventSystem
             _isSubscribedToEventRunner = false;
             EventManager.DeregisterToEventRunner(this);
         }
+        
+        /// <summary>
+        /// Called when event is loaded
+        /// </summary>
+        protected virtual void OnSetup()
+        {
+            
+        }
 
+        /// <summary>
+        /// Called when node is executed and is not already running
+        /// </summary>
         protected virtual void OnStart() { }
 
+        /// <summary>
+        /// Called when node completes with either Success or Failure
+        /// </summary>
         protected virtual void OnStop()
         {
-            if (state != State.Success) return;
+            if (state == State.Running) return;
 
             foreach (var child in children)
             {
@@ -160,37 +191,11 @@ namespace GameEventSystem
         }
         
         protected abstract State OnUpdate();
-
-        #region Graph
-        public virtual void PerformTestGraphFunction() { }
-        public void DrawInspector(VisualElement contentContainer)
-        {
-            SerializedObject obj = new SerializedObject(this);
-            
-            NodeInfoAttribute info = GetType().GetCustomAttribute<NodeInfoAttribute>() ?? new NodeInfoAttribute(name);
-            
-            Label nodeHeader = new Label(info.NodeTitle);
-            nodeHeader.AddToClassList("node-header");
-            contentContainer.Add(nodeHeader);
-            
-            var fields = GetType().GetFields();
-            foreach (var field in fields)
-            {
-                if (field.IsNotSerialized) continue;
-                if (field.GetCustomAttribute(typeof(HideInInspector)) != null) continue;
-                if (field.GetCustomAttribute(typeof(DisplayFieldAttribute)) != null) continue;
-
-                var propertyField = new PropertyField();
-                propertyField.bindingPath = field.Name;
-                propertyField.Bind(obj);
-                contentContainer.Add(propertyField);
-            }
-        }
-
+        
         public void BindBlackboard(AssetBlackboard blackboard)
         {
             this.blackboard = blackboard;
-            
+
             var bindableFields = GetType().GetFields().Where(fieldInfo => typeof(IBindable).IsAssignableFrom(fieldInfo.FieldType));
             foreach (var fieldInfo in bindableFields)
             {
@@ -202,6 +207,35 @@ namespace GameEventSystem
             EditorUtility.SetDirty(this);
 
             RequestRedraw();
+#endif
+        }
+
+        #region Graph
+        public virtual void PerformTestGraphFunction() { }
+        
+        public void DrawInspector(VisualElement contentContainer)
+        {
+#if UNITY_EDITOR
+            SerializedObject obj = new SerializedObject(this);
+
+            NodeInfoAttribute info = GetType().GetCustomAttribute<NodeInfoAttribute>() ?? new NodeInfoAttribute(name);
+            
+            Label nodeHeader = new Label(info.NodeTitle);
+            nodeHeader.AddToClassList("node-header");
+            contentContainer.Add(nodeHeader);
+            
+            var fields = GetType().GetFields();
+            foreach (var field in fields)
+            {
+                if (field.IsNotSerialized) continue;
+                if (field.GetCustomAttribute(typeof(HideInInspector)) != null) continue;
+                //if (field.GetCustomAttribute(typeof(DisplayFieldAttribute)) != null) continue;
+
+                var propertyField = new PropertyField();
+                propertyField.bindingPath = field.Name;
+                propertyField.Bind(obj);
+                contentContainer.Add(propertyField);
+            }
 #endif
         }
 
@@ -218,11 +252,6 @@ namespace GameEventSystem
                 DrawContent(_contentContainer);
             }
         }
-
-        public string GetDebugName()
-        {
-            return $"{_runtimeGameEvent.name}/{name}";
-        }
 #endif
         public virtual void DrawContent(VisualElement contentContainer)
         {
@@ -235,8 +264,8 @@ namespace GameEventSystem
             {
                 VisualElement fieldContainer = new VisualElement();
                 fieldContainer.style.marginTop = 5;
-                
-                PropertyField propertyField = new PropertyField(); 
+
+                PropertyField propertyField = new PropertyField();
                 propertyField.bindingPath = fieldInfo.Name;
                 propertyField.BindProperty(new SerializedObject(this));
                 fieldContainer.Add(propertyField);
@@ -265,6 +294,11 @@ namespace GameEventSystem
         {
             connections.Remove(connection);
             EditorUtility.SetDirty(this);
+        }
+        
+        public string GetDebugName()
+        {
+            return $"{runtimeGameEvent.name}/{name}";
         }
 
         public void GenerateGUID()

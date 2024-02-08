@@ -6,18 +6,18 @@ using UnityEngine;
 namespace GameEventSystem
 {
     [Serializable]
-    [AddTypeMenu("Check Bool")]
-    public class CheckBoolCondition : AbstractCondition
+    [AddTypeMenu("BBParam has value")]
+    public class CheckBBPropertyHasValue : AbstractCondition
     {
-        public BoolParameter testParameter;
+        [DisplayField] public GeneralBBReference param;
         public override bool CheckCondition(GameEvent parentEvent)
         {
-            return testParameter.GetValue();
+            return param.value != null;
         }
-        
+
         public override void Bind(IBlackboard blackboard)
         {
-            testParameter.Bind(blackboard);
+            param.Bind(blackboard);
         }
     }
 }

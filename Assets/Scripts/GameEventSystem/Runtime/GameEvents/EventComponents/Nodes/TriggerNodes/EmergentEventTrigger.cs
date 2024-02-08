@@ -10,13 +10,13 @@ namespace GameEventSystem
     {
         protected override void AddListener()
         {
-            EventManager.RegisterEmergentEvent(_runtimeGameEvent);
+            EventManager.RegisterEmergentEvent(runtimeGameEvent);
         }
 
         protected override void RemoveListener()
         {
-            state = State.Success;
-            EventManager.RemoveEmergentEvent(_runtimeGameEvent);
+            SetState(State.Success);
+            EventManager.RemoveEmergentEvent(runtimeGameEvent);
         }
     }
 }

@@ -65,7 +65,9 @@ namespace GameEventSystem.Editor
             if (!(this.text != this.m_TextField.text))
                 return;
             if (this.editTextRequested != null)
-                this.editTextRequested((VisualElement) this, this.m_TextField.text);
+            {
+                this.editTextRequested((VisualElement)this, this.m_TextField.text);
+            }
             else
                 this.text = this.m_TextField.text;
         }

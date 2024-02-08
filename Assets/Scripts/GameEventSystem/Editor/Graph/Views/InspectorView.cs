@@ -23,9 +23,8 @@ namespace GameEventSystem.Editor
 
         public void UpdateSelection(GameEventNodeView nodeView)
         {
-            Clear();
-
-
+            _contentContainer.Clear();
+            
             _selectedNode = nodeView;
             if (nodeView == null || nodeView.Node == null) return;
 
@@ -38,6 +37,11 @@ namespace GameEventSystem.Editor
             {
                 UpdateSelection(null);
             }
+        }
+
+        public void Redraw()
+        {
+            UpdateSelection(_selectedNode);
         }
     }
 }

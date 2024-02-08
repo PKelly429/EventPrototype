@@ -46,13 +46,20 @@ namespace GameEventSystem.Editor
             topRow.style.flexDirection = FlexDirection.Row;
             topRow.style.justifyContent = Justify.FlexEnd;
             bottomRow.style.flexDirection = FlexDirection.Row;
-            
+
 
             PropertyField valueField = new PropertyField();
-            valueField.BindProperty(property.FindPropertyRelative("_localValue"));
-            valueField.label = string.Empty;
-            valueField.style.flexGrow = 1;
-            bottomRow.Add(valueField);
+            try
+            {
+                valueField.BindProperty(property.FindPropertyRelative("_localValue"));
+                valueField.label = string.Empty;
+                valueField.style.flexGrow = 1;
+                bottomRow.Add(valueField);
+            }
+            catch (Exception e)
+            {
+                // ignored
+            }
 
             Label targetField = new Label();
             targetField.style.flexGrow = 1;
@@ -89,17 +96,17 @@ namespace GameEventSystem.Editor
             var repaintField = new PropertyField(property.FindPropertyRelative("name"));
             repaintField.RegisterValueChangeCallback(delegate(SerializedPropertyChangeEvent evt)
             {
-                Redraw(node, connectButton, target, targetField, infoField, valueField, disconnectButton);
+                Redraw(property, node, connectButton, target, targetField, infoField, valueField, disconnectButton);
             });
             repaintField.style.display = DisplayStyle.None;
             propertyContainer.Add(repaintField);
 
-            Redraw(node, connectButton, target, targetField, infoField, valueField, disconnectButton);
+            Redraw(property, node, connectButton, target, targetField, infoField, valueField, disconnectButton);
             
             return propertyContainer;
         }
 
-        private static void Redraw(GameEventNode node, Button connectButton, VariableReference target, Label targetField,
+        private static void Redraw(SerializedProperty property, GameEventNode node, Button connectButton, VariableReference target, Label targetField,
             Label infoField, PropertyField valueField, Button disconnectButton)
         {
             if (node == null) return;
@@ -107,13 +114,23 @@ namespace GameEventSystem.Editor
             connectButton.SetEnabled(node.blackboard != null);
 
             bool isBound = target.HasRef && node.blackboard != null;
+            bool canHaveValue = true;
+            try
+            {
+                canHaveValue = property.FindPropertyRelative("_localValue") != null;
+            }
+            catch (Exception e)
+            {
+                //ignored
+            }
 
             if (isBound)
             {
                 targetField.text = $"> {target.name}";
             }
 
-            infoField.text = isBound ? $"{node.blackboard.name}" : "Value:";
+            string labelText = canHaveValue ? "Value: " : "null";
+            infoField.text = isBound ? $"{node.blackboard.name}" : labelText;
 
             valueField.style.display =
                 isBound ? DisplayStyle.None : DisplayStyle.Flex;

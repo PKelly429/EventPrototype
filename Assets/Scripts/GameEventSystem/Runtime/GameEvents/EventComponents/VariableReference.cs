@@ -163,6 +163,13 @@ namespace GameEventSystem
             set => _localValue = (T)value;
         }
     }
+    
+    [System.Serializable]
+    public class GeneralBBReference : VariableReference
+    {
+        public override object localValue { get; set; }
+        public override Type type { get; }
+    }
 
     [System.Serializable]
     public class IntParameter : VariableRef<int>

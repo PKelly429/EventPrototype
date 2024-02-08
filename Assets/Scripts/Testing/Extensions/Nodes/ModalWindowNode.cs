@@ -56,7 +56,8 @@ public class ModalWindowNode : EffectNode
 
     public void SelectNode(ModalWindowChoiceNode choice)
     {
-        state = State.Success;
+        SetState(State.Success);
         choice.OnSelected();
+        runtimeGameEvent.SetNodeComplete(this);
     }
 }

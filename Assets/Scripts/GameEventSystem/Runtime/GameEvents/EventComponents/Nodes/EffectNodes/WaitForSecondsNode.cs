@@ -6,7 +6,6 @@ namespace GameEventSystem
 {
     [NodeInfo("Wait For Seconds", "FLOW")]
     [NodeDescription("Halt for time")]
-    [NodeConnectionOutput(PortTypeDefinitions.PortTypes.Flow)]
     public class WaitForSecondsNode : EffectNode
     {
         [DisplayField] public float Seconds;
